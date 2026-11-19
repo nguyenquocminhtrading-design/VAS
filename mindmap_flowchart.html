@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Kế Toán & Workflow Sản Xuất – Thông Tư 99/2025/TT-BTC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #FFFFFF;
+            --bg-sec: #F3F5F7;
+            --bg-card: #FFFFFF;
+            --border: #DCE3EA;
+            --primary-accent: #A8CFF0;
+            --highlight: #DCEEFF;
+            --button: #477DAA;
+            --button-hover: #38678f;
+            --text-main: #34495E;
+            --text-muted: #64748b;
+            --accent-green: #2e7d32;
+            --accent-red: #c62828;
+            --accent-orange: #d97706;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.04);
+            --radius: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-sec);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Top Header */
+        header {
+            background-color: var(--bg-main);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .tt-badge {
+            background-color: var(--button);
+            color: #ffffff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .title-group h1 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #1e293b;
+            letter-spacing: -0.3px;
+        }
+
+        .title-group p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .header-right {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            background-color: var(--button);
+            color: #ffffff;
+            border: 1px solid var(--button);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:hover {
+            background-color: var(--button-hover);
+        }
+
+        .btn-outline {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--highlight);
+            border-color: var(--primary-accent);
+            color: var(--button);
+        }
+
+        /* App Layout Container */
+        .app-layout {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 65px);
+            overflow: hidden;
+        }
+
+        /* LEFT SIDEBAR: Account Directory */
+        .sidebar {
+            width: 360px;
+            background-color: var(--bg-main);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            height: 100%;
+        }
+
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            background-color: var(--bg-sec);
+        }
+
+        .sidebar-header h2 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 8px 12px 8px 34px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.82rem;
+            outline: none;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            transition: all 0.2s;
+        }
+
+        .search-container input:focus {
+            border-color: var(--button);
+            box-shadow: 0 0 0 3px rgba(168, 207, 240, 0.4);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+        }
+
+        .account-group {
+            margin-bottom: 16px;
+        }
+
+        .group-title {
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 6px 8px;
+            background-color: var(--bg-sec);
+            border-radius: 4px;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .account-item {
+            padding: 9px 10px;
+            border-radius: 6px;
+            border: 1px solid transparent;
+            margin-bottom: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-size: 0.82rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            background-color: var(--bg-main);
+        }
+
+        .account-item:hover {
+            background-color: var(--highlight);
+            border-color: var(--primary-accent);
+        }
+
+        .account-item.active {
+            background-color: var(--highlight);
+            border-color: var(--button);
+        }
+
+        .acc-code-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .code-pill {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            background-color: var(--bg-sec);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--button);
+            border: 1px solid var(--border);
+        }
+
+        .acc-info-brief {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            line-height: 1.35;
+        }
+
+        .tag-new {
+            background-color: #fee2e2;
+            color: #dc2626;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 1px 5px;
+            border-radius: 4px;
+            margin-left: 4px;
+        }
+
+        /* MAIN STAGE (Right) */
+        .main-stage {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 20px 24px;
+            gap: 20px;
+        }
+
+        /* SECTION: 5-LANE FLOWCHART */
+        .flowchart-section {
+            background-color: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 5 LANES CONTAINER */
+        .lanes-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 14px;
+            position: relative;
+        }
+
+        .lane {
+            background-color: var(--bg-sec);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+
+        .lane:hover {
+            border-color: var(--primary-accent);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .lane-header {
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--button);
+            border-bottom: 2px solid var(--primary-accent);
+            padding-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .lane-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .flow-node {
+            background-color: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .flow-node:hover {
+            transform: translateY(-2px);
+            border-color: var(--button);
+            box-shadow: var(--shadow-md);
+            background-color: var(--highlight);
+        }
+
+        .flow-node.active-node {
+            border-color: var(--button);
+            background-color: var(--highlight);
+            box-shadow: 0 0 0 2px var(--primary-accent);
+        }
+
+        .node-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .node-code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--button);
+        }
+
+        .node-nature {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+
+        .nature-asset { background-color: #e0f2fe; color: #0369a1; }
+        .nature-cost { background-color: #fef3c7; color: #b45309; }
+        .nature-rev { background-color: #dcfce7; color: #15803d; }
+        .nature-liab { background-color: #f3e8ff; color: #7e22ce; }
+        .nature-equity { background-color: #ffedd5; color: #c2410c; }
+
+        .node-name {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .node-desc {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            line-height: 1.35;
+        }
+
+        /* Arrow Indicator between lanes */
+        .lane-connector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--button);
+            font-weight: 800;
+        }
+
+        /* SECTION: DETAIL INSPECTOR & WORKFLOW */
+        .detail-section {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 20px;
+        }
+
+        .detail-card {
+            background-color: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .detail-badge-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .acc-full-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        .detail-box {
+            background-color: var(--bg-sec);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.83rem;
+            line-height: 1.5;
+        }
+
+        .detail-box strong {
+            color: #1e293b;
+        }
+
+        .dr-cr-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .dr-box {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 0.78rem;
+        }
+
+        .dr-box-title {
+            font-weight: 700;
+            color: var(--accent-green);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .cr-box {
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 0.78rem;
+        }
+
+        .cr-box-title {
+            font-weight: 700;
+            color: var(--accent-red);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Workflow Entry Rows */
+        .workflow-box {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .workflow-item {
+            background-color: var(--bg-sec);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 0.8rem;
+            transition: all 0.15s;
+        }
+
+        .workflow-item:hover {
+            border-color: var(--button);
+            background-color: var(--highlight);
+        }
+
+        .wf-title {
+            font-weight: 700;
+            color: #1e293b;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .wf-vas {
+            font-size: 0.72rem;
+            color: var(--button);
+            font-weight: 700;
+        }
+
+        .wf-entries {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .wf-debit { color: var(--accent-green); font-weight: 600; }
+        .wf-credit { color: var(--accent-red); font-weight: 600; margin-left: 14px; }
+
+        .wf-reason {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Scrollbar aesthetics */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-sec);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP HEADER -->
+    <header>
+        <div class="header-left">
+            <span class="tt-badge">Thông Tư 99/2025/TT-BTC</span>
+            <div class="title-group">
+                <h1>HỆ THỐNG KẾ TOÁN & WORKFLOW SẢN XUẤT TRỰC QUAN</h1>
+                <p>Mô hình liên kết 5 làn quy trình chuẩn · Giải thích bản chất Nợ/Có theo VAS 01, 02, 03, 14, 17</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="btn btn-outline" onclick="resetToOverview()">🔄 Xem Toàn Cảnh</button>
+            <button class="btn" onclick="filterByLane('all')">📑 Xem Toàn Bộ Bút Toán</button>
+        </div>
+    </header>
+
+    <!-- MAIN APPLICATION CONTAINER -->
+    <div class="app-layout">
+
+        <!-- LEFT SIDEBAR: ACCOUNT DIRECTORY -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>📚 Danh Mục Tài Khoản</h2>
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="acc-search-input" placeholder="Tìm mã TK (VD: 154, 621, 332...)" oninput="searchAccounts()">
+                </div>
+            </div>
+
+            <div class="sidebar-content" id="sidebar-account-list">
+                <!-- Dynamically filled with categorized accounts -->
+            </div>
+        </aside>
+
+        <!-- MAIN STAGE: FLOWCHART & DETAIL INSPECTOR -->
+        <main class="main-stage">
+
+            <!-- SECTION 1: 5-LANES FLOWCHART -->
+            <section class="flowchart-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <span>🗺️</span>
+                        <span>Sơ Đồ Dòng Chảy Kế Toán Sản Xuất (5 Làn Quy Trình Liên Kết Khép Kín)</span>
+                    </div>
+                    <div style="font-size: 0.78rem; color: var(--text-muted);">
+                        Nhấp vào thẻ tài khoản bất kỳ để highlight luồng đi và xem chi tiết
+                    </div>
+                </div>
+
+                <!-- 5 LANES GRID -->
+                <div class="lanes-container">
+
+                    <!-- LANE 1 -->
+                    <div class="lane" id="lane-1">
+                        <div class="lane-header">
+                            <span>1.</span>
+                            <span>Đầu Vào & Tài Trợ</span>
+                        </div>
+                        <div class="lane-cards">
+                            <div class="flow-node" onclick="inspectAccount('411')">
+                                <div class="node-head">
+                                    <span class="node-code">411</span>
+                                    <span class="node-nature nature-equity">Vốn CSH</span>
+                                </div>
+                                <div class="node-name">Vốn đầu tư CSH</div>
+                                <div class="node-desc">(Vốn góp cổ đông, thặng dư vốn, Có tăng / Nợ giảm, Dư Có)</div>
+                            </div>
+                            <div class="flow-node" onclick="inspectAccount('331')">
+                                <div class="node-head">
+                                    <span class="node-code">331</span>
+                                    <span class="node-nature nature-liab">Nợ Phải Trả</span>
+                                </div>
+                                <div class="node-name">Phải trả người bán</div>
+                                <div class="node-desc">(Nợ tiền mua NVL/máy móc, Có tăng nợ / Nợ trả tiền, Lưỡng tính)</div>
+                            </div>
+                            <div class="flow-node" onclick="inspectAccount('112')">
+                                <div class="node-head">
+                                    <span class="node-code">112</span>
+                                    <span class="node-nature nature-asset">Tiền Gửi</span>
+                                </div>
+                                <div class="node-name">TG không kỳ hạn</div>
+                                <div class="node-desc">(Đổi tên từ TGNH, tài sản thanh toán, Nợ tăng / Có chi, Dư Nợ)</div>
+                            </div>
+                            <div class="flow-node" onclick="inspectAccount('133')">
+                                <div class="node-head">
+                                    <span class="node-code">133</span>
+                                    <span class="node-nature nature-asset">Tài Sản</span>
+                                </div>
+                                <div class="node-name">Thuế GTGT khấu trừ</div>
+                                <div class="node-desc">(Quyền tài sản thuế đầu vào, Nợ tăng / Có bù trừ 3331, Dư Nợ)</div>
+                            </div>
+                            <div class="flow-node" onclick="inspectAccount('242')">
+                                <div class="node-head">
+                                    <span class="node-code">242</span>
+                                    <span class="node-nature nature-asset">Chờ PB</span>
+                                </div>
+                                <div class="node-name">CP chờ phân bổ</div>
+                                <div class="node-desc">(Đổi tên từ CP trả trước, treo tiền thuê xưởng phân bổ dần 627)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LANE 2 -->
+                    <div class="lane" id="lane-2">
+                        <div class="lane-header">
+                            <span>2.</span>
+                            <span>Kho Vật Tư & TSCĐ</span>
+                        </div>
+                        <div class="lane-cards">
+                            <div class="flow-node" onclick="inspectAccount('152')">
+                                <div class="node-head">
+                                    <span class="node-code">152</span>
+                                    <span class="node-nature nature-asset">Kho NVL</span>
+                                </div>
+                                <div class="node-name">Nguyên liệu, vật liệu</div>
+                                <div class="node-desc">(Giá gốc NVL nhập kho, Nợ tăng nhập / Có xuất vào 621, Dư Nợ)</div>
+                            </div>
+                            <div class="flow-node" onclick="inspectAccount('153')">
+                                <div class="node-head">
+                                    <span class="node-code">153</span>
+                                    <span class="node-nature nature-asset">CCDC</span>
+                                </div>
+                                <div class="node-name">Công cụ, dụng cụ</div>
+                                <div class="node-desc">(Dụng cụ xưởng, xuất dùng lớn qua 242 phân bổ dần, Dư Nợ)</div>
+                            </div>
+                            <div class="flow-node" onclick="inspectAccount('211')">
+                                <div class="node-head">
+                                    <span class="node-code">211</span>
+                                    <span class="node-nature nature-asset">TSCĐ</span>
+                                </div>
+                                <div class="node-name">TSCĐ hữu hình</div>
+                                <div class="node-desc">(Nguyên giá máy móc xưởng, Nợ tăng mua / Có giảm thanh lý)</div>
+                            </div>
+                            <div class="flow-node" onclick="inspectAccount('215')">
+                                <div class="node-head">
+                                    <span class="node-code">215</span>
+                                    <span class="node-nature nature-asset">Mới TT99</span>
+                                </div>
+                                <div class="node-name">Tài sản sinh học</div>
+                                <div class="node-desc">(Bổ sung mới: Bò sữa 2151, heo thịt 2152, cây trồng mùa vụ 2153)</div>
+                            </div>
+                            <div class="flow-node" onclick="inspectAccount('2414')">
+                                <div class="node-head">
+                                    <span class="node-code">2414</span>
+                                    <span class="node-nature nature-asset">Mới TT99</span>
+                                </div>
+                                <div class="node-name">Nâng cấp, cải tạo TSCĐ</div>
+                                <div class="node-desc">(Chi phí nâng cấp dây chuyền vốn hóa tăng nguyên giá Nợ 211)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LANE 3 -->
+                    <div class="lane" id="lane-3">
+                        <div class="lane-header">
+                            <span>3.</span>
+                            <span>Phân Xưởng & Giá Thành</span>
+                        </div>
+                        <div class="lane-cards">
+                            <div class="flow-node" onclick="inspectAccount('621')">
+                                <div class="node-head">
+                                    <span class="node-code">621</span>
+                                    <span class="node-nature nature-cost">CP NVL TT</span>
+                                </div>
+                                <div class="node-name">CP NVL trực tiếp</div>
+                                <div class="node-desc">(Vải, sắt thép chế tạo SP, Nợ tăng / Có kết chuyển 154, Ko dư)</div>
+                            </div>
+                            <div class="flow-node" onclick="inspectAccount('622')">
+                                <div class="node-head">
+                                    <span class="node-code">622</span>
+                                    <span class="node-nature nature-cost">CP NC TT</span>
+                                </div>
+                                <div class="node-name">CP nhân công TT</div>
+                                <div class="node-desc">(Lương công nhân + 23.5% bảo hiểm DN chịu, kết chuyển 154)</div>
+                            </div>
+                            <div class="flow-node" onclick="inspectAccount('627')">
+                                <div class="node-head">
+                                    <span class="node-code">627</span>
+                                    <span class="node-nature nature-cost">CP SXC</span>
+                                </div>
+                                <div class="node-name">Chi phí sản xuất chung</div>
+                                <div class="node-desc">(Khấu hao máy 214, điện nước xưởng, lương quản đốc, vào 154)</div>
+                            </div>
+                            <div class="flow-node" style="border: 2px solid var(--button); background-color: var(--highlight);" onclick="inspectAccount('154')">
+                                <div class="node-head">
+                                    <span class="node-code" style="color: #0369a1;">154</span>
+                                    <span class="node-nature nature-asset">Trọng Tâm</span>
+                                </div>
+                                <div class="node-name">CP SXKD dở dang</div>
+                                <div class="node-desc">(Nơi tính giá thành: Gom 621+622+627; Nhập kho SP ghi Nợ 155)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LANE 4 -->
+                    <div class="lane" id="lane-4">
+                        <div class="lane-header">
+                            <span>4.</span>
+                            <span>Kho Thành Phẩm</span>
+                        </div>
+                        <div class="lane-cards">
+                            <div class="flow-node" onclick="inspectAccount('155')">
+                                <div class="node-head">
+                                    <span class="node-code">155</span>
+                                    <span class="node-nature nature-asset">Kho SP</span>
+                                </div>
+                                <div class="node-name">Sản phẩm hoàn thành</div>
+                                <div class="node-desc">(TT99 đổi tên từ Thành phẩm, Nợ tăng nhập từ 154 / Có xuất bán 632)</div>
+                            </div>
+                            <div class="flow-node" onclick="inspectAccount('157')">
+                                <div class="node-head">
+                                    <span class="node-code">157</span>
+                                    <span class="node-nature nature-asset">Gửi Bán</span>
+                                </div>
+                                <div class="node-name">Hàng gửi đi bán</div>
+                                <div class="node-desc">(Hàng gửi đại lý chưa chấp nhận mua, chưa đủ điều kiện nhận DT)</div>
+                            </div>
+                            <div class="flow-node" onclick="inspectAccount('2294')">
+                                <div class="node-head">
+                                    <span class="node-code">2294</span>
+                                    <span class="node-nature nature-liab">Dự Phòng</span>
+                                </div>
+                                <div class="node-name">DP giảm giá HTK</div>
+                                <div class="node-desc">(Định kỳ trích lập thận trọng khi NRV < Giá gốc, ghi Nợ 632)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LANE 5 -->
+                    <div class="lane" id="lane-5">
+                        <div class="lane-header">
+                            <span>5.</span>
+                            <span>Tiêu Thụ & Khóa Sổ KQKD</span>
+                        </div>
+                        <div class="lane-cards">
+                            <div class="flow-node" onclick="inspectAccount('511')">
+                                <div class="node-head">
+                                    <span class="node-code">511</span>
+                                    <span class="node-nature nature-rev">Doanh Thu</span>
+                                </div>
+                                <div class="node-name">Doanh thu bán hàng</div>
+                                <div class="node-desc">(5 điều kiện VAS 14, Có tăng khi giao hàng / Nợ kết chuyển 911)</div>
+                            </div>
+                            <div class="flow-node" onclick="inspectAccount('632')">
+                                <div class="node-head">
+                                    <span class="node-code">632</span>
+                                    <span class="node-nature nature-cost">Giá Vốn</span>
+                                </div>
+                                <div class="node-name">Giá vốn hàng bán</div>
+                                <div class="node-desc">(Matching với 511, Nợ tăng xuất kho 155 / Nợ 911 Có 632)</div>
+                            </div>
+                            <div class="flow-node" onclick="inspectAccount('641')">
+                                <div class="node-head">
+                                    <span class="node-code">641</span>
+                                    <span class="node-nature nature-cost">Bán Hàng</span>
+                                </div>
+                                <div class="node-name">Chi phí bán hàng</div>
+                                <div class="node-desc">(Vận chuyển, bao bì, lương NV sale, kết chuyển sang 911)</div>
+                            </div>
+                            <div class="flow-node" onclick="inspectAccount('642')">
+                                <div class="node-head">
+                                    <span class="node-code">642</span>
+                                    <span class="node-nature nature-cost">QLDN</span>
+                                </div>
+                                <div class="node-name">Chi phí quản lý DN</div>
+                                <div class="node-desc">(Lương văn phòng, khấu hao trụ sở, dự phòng khó đòi 2293)</div>
+                            </div>
+                            <div class="flow-node" style="border: 2px solid #be123c;" onclick="inspectAccount('911')">
+                                <div class="node-head">
+                                    <span class="node-code" style="color: #be123c;">911</span>
+                                    <span class="node-nature nature-rev">Kết Quả</span>
+                                </div>
+                                <div class="node-name">Xác định KQKD</div>
+                                <div class="node-desc">(Tập hợp Có DT/Thu nhập - Nợ Chi phí -> Kết chuyển Lãi sang 4212)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- SECTION 2: DETAIL INSPECTOR & WORKFLOW ENTRIES -->
+            <section class="detail-section">
+
+                <!-- DETAIL CARD (Left) -->
+                <div class="detail-card">
+                    <div class="detail-badge-row">
+                        <span class="code-pill" id="insp-code" style="font-size: 1rem; padding: 4px 10px;">154</span>
+                        <span class="node-nature nature-asset" id="insp-nature">Hàng Tồn Kho Trọng Tâm</span>
+                        <span id="insp-badge-new"></span>
+                    </div>
+
+                    <div class="acc-full-title" id="insp-title">
+                        Tài Khoản 154 – Chi Phí Sản Xuất, Kinh Doanh Dở Dang
+                    </div>
+
+                    <div class="detail-box" id="insp-summary">
+                        <strong>Mở Ngoặc Thông Tin Sơ Bộ:</strong><br>
+                        (Tài khoản tập hợp chi phí và tính giá thành sản phẩm; phản ánh giá trị sản phẩm đang dở dang trên dây chuyền; Nợ tập hợp chi phí phát sinh / Có kết chuyển nhập kho sản phẩm 155; Số dư bên Nợ phản ánh chi phí dở dang cuối kỳ).
+                    </div>
+
+                    <!-- Dr / Cr Mechanism -->
+                    <div class="dr-cr-grid">
+                        <div class="dr-box">
+                            <div class="dr-box-title">➕ BÊN NỢ (DEBIT) GHI NHẬN:</div>
+                            <div id="insp-debit-text" style="color: #1e293b; line-height: 1.4;">
+                                - Tập hợp chi phí NVL trực tiếp (kết chuyển từ 621).<br>
+                                - Tập hợp chi phí nhân công trực tiếp (từ 622).<br>
+                                - Tập hợp chi phí sản xuất chung (từ 627).
+                            </div>
+                        </div>
+
+                        <div class="cr-box">
+                            <div class="cr-box-title">➖ BÊN CÓ (CREDIT) GHI NHẬN:</div>
+                            <div id="insp-credit-text" style="color: #1e293b; line-height: 1.4;">
+                                - Giá thành sản xuất thực tế của sản phẩm hoàn thành nhập kho (chuyển sang 155).<br>
+                                - Chi phí vượt định mức tống vào giá vốn 632.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-box" style="background-color: #fff; border-left: 4px solid var(--button);">
+                        <strong style="color: var(--button);">Căn Cứ Chuẩn Mực VAS & Pháp Lý:</strong>
+                        <p id="insp-vas" style="margin-top: 4px; font-size: 0.8rem; color: var(--text-main);">
+                            VAS 02 (Đoạn 10-15: Phương pháp tính giá thành công xưởng) & Thông tư 99/2025/TT-BTC Phụ lục II.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- WORKFLOW ENTRIES (Right) -->
+                <div class="detail-card">
+                    <div class="section-header" style="padding-bottom: 8px;">
+                        <div class="section-title">
+                            <span>📋</span>
+                            <span>Bút Toán Đối Ứng & Lý Do Ghi Nhận (Tại Sao Ghi Như Vậy?)</span>
+                        </div>
+                    </div>
+
+                    <div class="workflow-box" id="workflow-list-container">
+                        <!-- Populated by JS based on selection -->
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- DATA & INTERACTION SCRIPT -->
+    <script>
+        // --- 1. FULL ACCOUNT DATABASE (71 C1 + Highlights) ---
+        const accountsDB = [
+            // LOẠI 1: TÀI SẢN NGẮN HẠN
+            { code: '111', name: 'Tiền mặt', cat: '1', nature: 'Tài sản ngắn hạn', dư: 'Bên Nợ', isNew: false,
+              brief: '(Tiền mặt tồn tại quỹ, Nợ thu tiền vào / Có chi tiền ra, Dư Nợ)',
+              dr: 'Thu tiền bán hàng, thu nợ KH, rút TGNH về quỹ, thừa kiểm kê quỹ.',
+              cr: 'Chi trả tiền nhà cung cấp, chi tạm ứng, trả lương, nộp vào ngân hàng.',
+              vas: 'VAS 01 (Cơ sở dồn tích) & TT 99 Phụ lục II.'
+            },
+            { code: '112', name: 'Tiền gửi không kỳ hạn', cat: '1', nature: 'Tài sản ngắn hạn', dư: 'Bên Nợ', isNew: true,
+              brief: '(TT99 đổi tên từ TGNH, tài khoản thanh toán, Nợ nhận tiền chuyển khoản / Có chuyển tiền chi trả)',
+              dr: 'Khách hàng thanh toán qua ngân hàng, nộp tiền mặt vào tài khoản, thu lãi tiền gửi.',
+              cr: 'Chuyển khoản thanh toán người bán, nộp thuế điện tử, trả gốc/lãi vay ngân hàng.',
+              vas: 'Làm rõ bản chất không kỳ hạn, tách biệt với tiền gửi có kỳ hạn (1281).'
+            },
+            { code: '113', name: 'Tiền đang chuyển', cat: '1', nature: 'Tài sản ngắn hạn', dư: 'Bên Nợ', isNew: false,
+              brief: '(Tiền đã nộp hoặc chi chuyển nhưng chưa nhận được Giấy báo Nợ/Có của ngân hàng)',
+              dr: 'Nộp tiền vào ngân hàng nhưng chưa có giấy báo có; chuyển tiền chi trả chưa hoàn tất.',
+              cr: 'Ngân hàng phát hành Giấy báo Có/Nợ xác nhận tiền đã vào tài khoản người nhận.',
+              vas: 'Cơ sở dồn tích & Nguyên tắc Thận trọng.'
+            },
+            { code: '121', name: 'Chứng khoán kinh doanh', cat: '1', nature: 'Tài sản ngắn hạn', dư: 'Bên Nợ', isNew: false,
+              brief: '(Cổ phiếu, trái phiếu mua bán kiếm lời chênh lệch giá, Nợ mua vào / Có bán ra)',
+              dr: 'Giá mua cổ phiếu, trái phiếu + chi phí môi giới giao dịch phát sinh ban đầu.',
+              cr: 'Giá gốc chứng khoán xuất bán (tính theo bình quân gia quyền hoặc FIFO).',
+              vas: 'VAS 08 & Nguyên tắc Giá gốc.'
+            },
+            { code: '128', name: 'Đầu tư nắm giữ đến ngày đáo hạn', cat: '1', nature: 'Tài sản tài chính', dư: 'Bên Nợ', isNew: false,
+              brief: '(Tiền gửi có kỳ hạn 1281, cho vay 1283, trái phiếu 1282 giữ đến hạn hưởng lãi)',
+              dr: 'Gửi tiết kiệm có kỳ hạn tại ngân hàng, cho vay các bên bằng tiền, mua trái phiếu.',
+              cr: 'Thu hồi tiền gửi tiết kiệm khi đáo hạn, thu hồi nợ gốc cho vay.',
+              vas: 'Phân loại công cụ tài chính theo kỳ hạn sinh lời.'
+            },
+            { code: '131', name: 'Phải thu của khách hàng', cat: '1', nature: 'Tài sản (Lưỡng tính)', dư: 'Dư Nợ hoặc Dư Có', isNew: false,
+              brief: '(Dư Nợ: Khách nợ tiền hàng; Dư Có: Khách trả cọc tiền trước, cấm ghi doanh thu khi chưa giao hàng)',
+              dr: 'Số tiền phải thu khi bàn giao sản phẩm, xuất hóa đơn bán chịu cho khách hàng.',
+              cr: 'Khách hàng thanh toán tiền; chiết khấu, giảm giá trừ vào nợ; khách trả trước tiền.',
+              vas: 'VAS 14 (5 điều kiện ghi nhận DT) & VAS 01 (Thận trọng).'
+            },
+            { code: '133', name: 'Thuế GTGT được khấu trừ', cat: '1', nature: 'Tài sản ngắn hạn', dư: 'Bên Nợ', isNew: false,
+              brief: '(Quyền tài sản thuế đầu vào được hoàn hoặc bù trừ, Nợ phát sinh hóa đơn mua / Có cấn trừ 3331)',
+              dr: 'Thuế GTGT đầu vào hợp lệ khi mua nguyên vật liệu, tài sản, dịch vụ phục vụ sản xuất.',
+              cr: 'Bù trừ với thuế GTGT đầu ra (3331) cuối kỳ; hoàn thuế GTGT từ Kho bạc Nhà nước.',
+              vas: 'Luật Thuế GTGT & VAS 02 (Thuế được hoàn không tính vào giá gốc hàng tồn kho).'
+            },
+            { code: '138', name: 'Phải thu khác', cat: '1', nature: 'Tài sản (Lưỡng tính)', dư: 'Dư Nợ / Dư Có', isNew: true,
+              brief: '(Phải thu ngoài thương mại: 1381 thiếu chờ xử lý, 1383 Thuế TTĐB hàng NK mới TT99, 1388 khác)',
+              dr: 'Tài sản phát hiện thiếu chưa rõ nguyên nhân; thuế TTĐB hàng nhập khẩu được hoàn (1383 mới).',
+              cr: 'Kết chuyển xử lý tài sản thiếu trừ lương thủ kho; nhận tiền hoàn thuế TTĐB.',
+              vas: 'TT 99 bổ sung TK 1383 để minh bạch nghĩa vụ thuế TTĐB hàng nhập khẩu.'
+            },
+            { code: '141', name: 'Tạm ứng', cat: '1', nature: 'Tài sản ngắn hạn', dư: 'Bên Nợ', isNew: false,
+              brief: '(Tiền giao cho nhân viên đi công tác hoặc mua sắm vật tư chưa quyết toán chứng từ)',
+              dr: 'Xuất tiền mặt/chuyển khoản tạm ứng cho nhân viên nội bộ theo đề xuất phê duyệt.',
+              cr: 'Quyết toán số tiền đã chi theo hóa đơn hợp lệ; thu hồi tiền tạm ứng thừa nhập lại quỹ.',
+              vas: 'Nguyên tắc quản trị tài chính nội bộ.'
+            },
+            { code: '151', name: 'Hàng mua đang đi đường', cat: '1', nature: 'Hàng tồn kho', dư: 'Bên Nợ', isNew: false,
+              brief: '(Hóa đơn đã về và thuộc quyền sở hữu nhưng hàng còn đang vận chuyển chưa nhập kho)',
+              dr: 'Trị giá hàng hóa, NVL đã mua có hóa đơn nhưng cuối tháng hàng chưa về đến kho.',
+              cr: 'Hàng về đến kho, làm biên bản kiểm nghiệm nhập kho chuyển sang 152, 153, 156.',
+              vas: 'VAS 02 & Cơ sở dồn tích.'
+            },
+            { code: '152', name: 'Nguyên liệu, vật liệu', cat: '1', nature: 'Hàng tồn kho', dư: 'Bên Nợ', isNew: false,
+              brief: '(Trị giá NVL chính, phụ mua về tồn kho; Nợ nhập kho giá gốc / Có xuất sản xuất 621, Dư Nợ)',
+              dr: 'Trị giá NVL mua ngoài nhập kho (giá mua + chi phí vận chuyển bốc dỡ) hoặc tự chế hoàn thành.',
+              cr: 'Xuất kho NVL đưa vào sản xuất trực tiếp (621), xuất cho quản lý xưởng (627), xuất bán.',
+              vas: 'VAS 02 – Hàng tồn kho (Đoạn 08: Nguyên tắc Giá gốc).'
+            },
+            { code: '153', name: 'Công cụ, dụng cụ', cat: '1', nature: 'Hàng tồn kho', dư: 'Bên Nợ', isNew: false,
+              brief: '(CCDC tồn kho phục vụ sản xuất, xuất dùng loại lớn qua 242 phân bổ dần vào 627)',
+              dr: 'Nhập kho CCDC mua ngoài hoặc tự chế, phát hiện thừa khi kiểm kê.',
+              cr: 'Xuất dùng CCDC cho phân xưởng (loại 1 lần vào 627, nhiều lần qua 242).',
+              vas: 'VAS 02 & Nguyên tắc Phù hợp.'
+            },
+            { code: '154', name: 'Chi phí sản xuất kinh doanh dở dang', cat: '1', nature: 'Hàng tồn kho trọng tâm', dư: 'Bên Nợ', isNew: false,
+              brief: '(Tài khoản tập hợp chi phí 621+622+627 để tính giá thành sản phẩm; Dư Nợ là dở dang cuối kỳ)',
+              dr: 'Cuối kỳ kết chuyển toàn bộ chi phí sản xuất trong kỳ từ TK 621, 622, 627.',
+              cr: 'Giá thành công xưởng thực tế của sản phẩm hoàn thành nhập kho (155) hoặc xuất bán (632).',
+              vas: 'VAS 02 – Hàng tồn kho (Chi phí chế biến và tập hợp giá thành).'
+            },
+            { code: '155', name: 'Sản phẩm', cat: '1', nature: 'Hàng tồn kho', dư: 'Bên Nợ', isNew: true,
+              brief: '(TT99 đổi tên từ Thành phẩm, Nợ tăng khi nhập kho từ 154 / Có giảm khi xuất bán sang 632)',
+              dr: 'Trị giá sản phẩm sản xuất hoàn thành kiểm nghiệm nhập kho từ phân xưởng (Nợ 155 / Có 154).',
+              cr: 'Xuất kho sản phẩm giao bán cho khách (Nợ 632 / Có 155), gửi bán đại lý (Nợ 157 / Có 155).',
+              vas: 'TT 99 chuẩn hóa tên gọi Sản phẩm thay cho Thành phẩm, loại bỏ tài khoản con 1551, 1557.'
+            },
+            { code: '157', name: 'Hàng gửi đi bán', cat: '1', nature: 'Hàng tồn kho', dư: 'Bên Nợ', isNew: false,
+              brief: '(Hàng đã rời kho gửi đại lý nhưng chưa bán được; rủi ro vẫn thuộc DN, cấm ghi doanh thu)',
+              dr: 'Trị giá sản phẩm xuất gửi cho đại lý hoặc giao trên đường chưa bàn giao nghiệm thu.',
+              cr: 'Đại lý thông báo đã bán được hàng (chuyển sang giá vốn Nợ 632 / Có 157 và ghi nhận DT 511).',
+              vas: 'VAS 14 – Điều kiện ghi nhận doanh thu (Chưa chuyển giao rủi ro sở hữu).'
+            },
+            { code: '158', name: 'Nguyên liệu vật tư tại kho bảo thuế', cat: '1', nature: 'Hàng tồn kho', dư: 'Bên Nợ', isNew: true,
+              brief: '(TT99 đổi tên từ Hàng hóa kho bảo thuế, phục vụ DN chế xuất, sản xuất xuất khẩu)',
+              dr: 'Nhập khẩu nguyên vật liệu đưa thẳng vào kho bảo thuế để sản xuất hàng xuất khẩu.',
+              cr: 'Xuất NVL từ kho bảo thuế đưa vào quy trình sản xuất (chuyển sang 621 hoặc 152).',
+              vas: 'Quy định quản trị hải quan và sản xuất hàng xuất khẩu.'
+            },
+
+            // LOẠI 2: TÀI SẢN DÀI HẠN
+            { code: '211', name: 'Tài sản cố định hữu hình', cat: '2', nature: 'Tài sản dài hạn', dư: 'Bên Nợ', isNew: false,
+              brief: '(Nguyên giá máy móc thiết bị, nhà xưởng thuộc sở hữu; Nợ tăng mua mới/vốn hóa / Có giảm thanh lý)',
+              dr: 'Nguyên giá TSCĐ mua mới, tự xây lắp bàn giao (từ 2412), nâng cấp cải tạo hoàn thành (từ 2414).',
+              cr: 'Giảm nguyên giá do nhượng bán, thanh lý, phát hiện mất mát.',
+              vas: 'VAS 03 – Tài sản cố định hữu hình (Nguyên giá & Vốn hóa).'
+            },
+            { code: '214', name: 'Hao mòn tài sản cố định', cat: '2', nature: 'Điều chỉnh giảm TS', dư: 'Bên Có', isNew: false,
+              brief: '(Tài khoản ngược: Có tăng trích KH hàng tháng tính vào 627, 641, 642 / Nợ giảm khi thanh lý máy)',
+              dr: 'Giảm giá trị hao mòn lũy kế khi nhượng bán, thanh lý TSCĐ (Nợ 214 / Có 211).',
+              cr: 'Trích khấu hao TSCĐ định kỳ hàng tháng tính vào chi phí sản xuất (6274), quản lý (6424).',
+              vas: 'VAS 03 & Nguyên tắc Phù hợp (Phân bổ hao mòn tương ứng doanh thu).'
+            },
+            { code: '215', name: 'Tài sản sinh học', cat: '2', nature: 'Tài sản dài/ngắn hạn', dư: 'Bên Nợ', isNew: true,
+              brief: '(Hoàn toàn mới TT99 theo IAS 41: Bò sữa 2151, heo thịt 2152, cây trồng mùa vụ 2153)',
+              dr: 'Mua con giống, cây giống; chi phí nuôi trồng chăm sóc đến khi trưởng thành sinh sản.',
+              cr: 'Bán sản phẩm sinh học; giết thịt lấy thịt đưa vào nhà máy chế biến thành phẩm (sang 154).',
+              vas: 'Thông tư 99/2025/TT-BTC bổ sung mới tiệm cận chuẩn quốc tế IAS 41 (Nông nghiệp).'
+            },
+            { code: '229', name: 'Dự phòng tổn thất tài sản', cat: '2', nature: 'Điều chỉnh giảm TS', dư: 'Bên Có', isNew: true,
+              brief: '(Tài khoản ngược: 2293 khó đòi, 2294 giảm giá HTK, 2295 tổn thất tài sản sinh học mới TT99)',
+              dr: 'Hoàn nhập số dự phòng đã trích lập kỳ trước khi giá trị tài sản hồi phục (ghi giảm chi phí).',
+              cr: 'Trích lập bổ sung dự phòng tổn thất cuối năm (Nợ 632 / Có 2294; Nợ 642 / Có 2293; Có 2295 mới).',
+              vas: 'VAS 18 & Nguyên tắc Thận trọng (Không ghi nhận tài sản cao hơn giá trị có thể thu hồi).'
+            },
+            { code: '2414', name: 'Nâng cấp, cải tạo TSCĐ', cat: '2', nature: 'Tài sản dở dang', dư: 'Bên Nợ', isNew: true,
+              brief: '(Mới TT99: Tách riêng chi phí nâng cấp làm tăng công suất/kéo dài tuổi thọ để vốn hóa tăng 211)',
+              dr: 'Tập hợp các khoản chi phí cải tạo, nâng cấp dây chuyền sản xuất lớn.',
+              cr: 'Nghiệm thu bàn giao hoàn tất, kết chuyển vốn hóa tăng nguyên giá máy móc (Nợ 211 / Có 2414).',
+              vas: 'VAS 03 (Đoạn 23 - Vốn hóa chi phí sau ghi nhận ban đầu).'
+            },
+            { code: '242', name: 'Chi phí chờ phân bổ', cat: '2', nature: 'Tài sản ngắn/dài hạn', dư: 'Bên Nợ', isNew: true,
+              brief: '(TT99 đổi tên từ Chi phí trả trước, treo tiền thuê đất/xưởng nhiều năm phân bổ đều vào 627/642)',
+              dr: 'Chi phí trả trước tiền thuê nhà xưởng, bảo hiểm, công cụ dụng cụ xuất dùng nhiều kỳ.',
+              cr: 'Phân bổ dần từng tháng vào chi phí sản xuất chung (627) hoặc quản lý (642).',
+              vas: 'VAS 01 – Nguyên tắc Phù hợp & Cơ sở dồn tích.'
+            },
+
+            // LOẠI 3: NỢ PHẢI TRẢ
+            { code: '331', name: 'Phải trả cho người bán', cat: '3', nature: 'Nợ phải trả (Lưỡng tính)', dư: 'Dư Có / Dư Nợ', isNew: false,
+              brief: '(Dư Có: Số tiền còn nợ nhà cung cấp; Dư Nợ: Số tiền đã ứng trước cho người bán)',
+              dr: 'Thanh toán tiền hàng cho người bán bằng TGNH; giảm giá, trả lại hàng được trừ nợ.',
+              cr: 'Số nợ phải trả phát sinh khi mua nguyên vật liệu, TSCĐ chưa thanh toán.',
+              vas: 'Cơ sở dồn tích (Ghi nhận nợ ngay khi nhận bàn giao quyền sở hữu).'
+            },
+            { code: '332', name: 'Phải trả cổ tức, lợi nhuận', cat: '3', nature: 'Nợ phải trả', dư: 'Bên Có', isNew: true,
+              brief: '(Hoàn toàn mới TT99: Tách riêng nghĩa vụ chia cổ tức từ 3388, Có tăng khi ĐHĐCĐ duyệt chia / Nợ giảm khi trả)',
+              dr: 'Chuyển khoản chi trả cổ tức cho cổ đông (Nợ 332 / Có 112).',
+              cr: 'Nghị quyết ĐHĐCĐ công bố trích lợi nhuận chia cổ tức (Nợ 421 / Có 332).',
+              vas: 'Minh bạch nghĩa vụ tài chính đối với nhà đầu tư và cổ đông theo Luật Doanh nghiệp.'
+            },
+            { code: '333', name: 'Thuế và các khoản phải nộp Nhà nước', cat: '3', nature: 'Nợ phải trả (Lưỡng tính)', dư: 'Dư Có / Dư Nợ', isNew: false,
+              brief: '(3331 VAT đầu ra, 3334 thuế TNDN, 3335 thuế TNCN; Có tăng nghĩa vụ nộp / Nợ giảm khi nộp tiền)',
+              dr: 'Số tiền thuế thực tế đã nộp vào Kho bạc Nhà nước qua chuyển khoản (Nợ 333 / Có 112).',
+              cr: 'Số thuế phát sinh phải nộp (VAT đầu ra khi bán hàng 33311, thuế TNDN tạm tính 3334).',
+              vas: 'Luật Quản lý Thuế & Cơ sở dồn tích.'
+            },
+            { code: '334', name: 'Phải trả người lao động', cat: '3', nature: 'Nợ phải trả', dư: 'Bên Có', isNew: false,
+              brief: '(Có tăng tiền lương tính cho công nhân/nhân viên / Nợ giảm khi trừ bảo hiểm 10.5% & chuyển trả lương)',
+              dr: 'Thanh toán tiền lương qua ngân hàng; các khoản trừ lương: BHXH 10.5%, thuế TNCN, tạm ứng.',
+              cr: 'Tính lương, thưởng phải trả cho công nhân trực tiếp (622), quản xưởng (627), QLDN (642).',
+              vas: 'Luật Lao động & VAS 02 (Chi phí nhân công cấu thành sản phẩm).'
+            },
+            { code: '338', name: 'Phải trả, phải nộp khác', cat: '3', nature: 'Nợ phải trả', dư: 'Bên Có', isNew: true,
+              brief: '(3382 KPCĐ, 3383 BHXH, 3384 BHYT, 3386 BHTN; 3387 Doanh thu chờ phân bổ đổi tên TT99)',
+              dr: 'Nộp tiền BHXH 34% cho cơ quan Bảo hiểm xã hội qua ngân hàng; phân bổ dần 3387 sang 511.',
+              cr: 'Trích nộp bảo hiểm theo lương (DN chịu 23.5%, NLĐ chịu 10.5%); nhận trước tiền thuê xưởng.',
+              vas: 'Luật BHXH & Nguyên tắc Dồn tích.'
+            },
+
+            // LOẠI 4: VỐN CHỦ SỞ HỮU
+            { code: '411', name: 'Vốn đầu tư của chủ sở hữu', cat: '4', nature: 'Vốn chủ sở hữu', dư: 'Bên Có', isNew: false,
+              brief: '(Vốn góp thực tế của cổ đông theo giấy phép ĐKKD; Có tăng nhận vốn / Nợ giảm trả bớt vốn)',
+              dr: 'Giảm vốn điều lệ theo thủ tục pháp lý, hủy cổ phiếu mua lại của chính mình (419).',
+              cr: 'Nhận vốn góp bằng tiền mặt, chuyển khoản (112), hoặc tài sản máy móc (211).',
+              vas: 'Luật Doanh nghiệp & VAS 01.'
+            },
+            { code: '419', name: 'Cổ phiếu mua lại của chính mình', cat: '4', nature: 'Điều chỉnh giảm VCSH', dư: 'Bên Nợ', isNew: true,
+              brief: '(TT99 đổi tên từ Cổ phiếu quỹ cho đồng bộ Luật Doanh nghiệp, Nợ giá mua lại / Có hủy cổ phiếu)',
+              dr: 'Số tiền thực tế bỏ ra mua lại cổ phiếu của chính mình đang lưu hành trên sàn chứng khoán.',
+              cr: 'Hủy bỏ cổ phiếu mua lại để làm thủ tục giảm vốn điều lệ (Nợ 4111 / Có 419).',
+              vas: 'Luật Doanh nghiệp 2020 & Chuẩn mực trình bày vốn CSH.'
+            },
+            { code: '421', name: 'Lợi nhuận sau thuế chưa phân phối', cat: '4', nature: 'Vốn chủ sở hữu (Lưỡng tính)', dư: 'Dư Có (Lãi) / Dư Nợ (Lỗ)', isNew: false,
+              brief: '(Dư Có: Lãi lũy kế chưa chia; Dư Nợ: Lỗ kinh doanh; Có nhận lãi từ 911 / Nợ chia cổ tức sang 332)',
+              dr: 'Kết chuyển số lỗ trong kỳ từ 911; trích chia cổ tức sang 332; trích lập quỹ đầu tư phát triển 414.',
+              cr: 'Kết chuyển số lãi thuần kinh doanh trong kỳ từ TK 911 (Nợ 911 / Có 4212).',
+              vas: 'VAS 01 – Đoạn kết quả kinh doanh và phân phối thặng dư.'
+            },
+
+            // LOẠI 5 & 6 & 7 & 8 & 9
+            { code: '511', name: 'Doanh thu bán hàng và CCDV', cat: '5', nature: 'Doanh thu cốt lõi', dư: 'Không có số dư', isNew: false,
+              brief: '(Có phát sinh khi bàn giao SP đủ 5 điều kiện VAS 14 / Nợ kết chuyển cuối kỳ sang 911, không có số dư)',
+              dr: 'Kết chuyển các khoản giảm trừ doanh thu (521); cuối kỳ kết chuyển doanh thu thuần sang 911.',
+              cr: 'Doanh thu bán thành phẩm hoàn thành bàn giao khách hàng (không bao gồm thuế GTGT).',
+              vas: 'VAS 14 – Doanh thu và thu nhập khác (5 điều kiện ghi nhận).'
+            },
+            { code: '621', name: 'Chi phí nguyên liệu, vật liệu trực tiếp', cat: '6', nature: 'Chi phí sản xuất', dư: 'Không có số dư', isNew: false,
+              brief: '(Nợ xuất kho NVL trực tiếp chế tạo SP / Có kết chuyển cuối kỳ sang 154 tính giá thành, không số dư)',
+              dr: 'Trị giá thực tế của NVL xuất kho đưa thẳng vào chuyền sản xuất trực tiếp chế tạo SP.',
+              cr: 'NVL dùng không hết nhập lại kho; cuối kỳ kết chuyển toàn bộ vào Nợ 154.',
+              vas: 'VAS 02 – Hàng tồn kho (Chi phí nguyên liệu trực tiếp).'
+            },
+            { code: '622', name: 'Chi phí nhân công trực tiếp', cat: '6', nature: 'Chi phí sản xuất', dư: 'Không có số dư', isNew: false,
+              brief: '(Nợ lương công nhân đứng máy + 23.5% bảo hiểm DN chịu / Có kết chuyển cuối kỳ sang 154, không số dư)',
+              dr: 'Tiền lương công nhân sản xuất trực tiếp và 23.5% BHXH, BHYT, BHTN, KPCĐ doanh nghiệp chịu.',
+              cr: 'Cuối kỳ kết chuyển toàn bộ vào Nợ 154 để tính giá thành sản phẩm.',
+              vas: 'VAS 02 – Hàng tồn kho (Chi phí nhân công trực tiếp chế biến).'
+            },
+            { code: '627', name: 'Chi phí sản xuất chung', cat: '6', nature: 'Chi phí phân xưởng', dư: 'Không có số dư', isNew: false,
+              brief: '(Khấu hao máy 214, điện nước xưởng, lương quản đốc; Nợ phát sinh / Có kết chuyển sang 154, không số dư)',
+              dr: 'Chi phí quản lý phân xưởng (6271), vật liệu phụ xưởng (6272), khấu hao máy xưởng (6274), điện nước (6277).',
+              cr: 'Cuối kỳ phân bổ chi phí cố định bình thường và chi phí biến đổi sang Nợ 154.',
+              vas: 'VAS 02 (Đoạn 11: Phân bổ chi phí sản xuất chung theo công suất bình thường).'
+            },
+            { code: '632', name: 'Giá vốn hàng bán', cat: '6', nature: 'Chi phí cốt lõi', dư: 'Không có số dư', isNew: false,
+              brief: '(Nợ giá xuất kho SP giao bán matching với 511 + CP hao hụt vượt định mức / Có kết chuyển sang 911)',
+              dr: 'Giá thành sản xuất thực tế của số sản phẩm đã xuất bán trong kỳ; chi phí NVL vượt định mức.',
+              cr: 'Hàng bán bị khách trả lại nhập kho (giảm giá vốn); cuối kỳ kết chuyển toàn bộ sang Nợ 911.',
+              vas: 'VAS 01 (Nguyên tắc Phù hợp matching) & VAS 02 (Đoạn 14).'
+            },
+            { code: '641', name: 'Chi phí bán hàng', cat: '6', nature: 'Chi phí thời kỳ', dư: 'Không có số dư', isNew: false,
+              brief: '(Vận chuyển giao hàng, bao bì đóng gói, lương nhân viên sale; Nợ phát sinh / Có kết chuyển 911)',
+              dr: 'Lương nhân viên bán hàng (6411), khấu hao xe tải giao hàng (6414), chi phí quảng cáo, hội chợ (6417).',
+              cr: 'Các khoản giảm trừ; cuối kỳ kết chuyển toàn bộ sang Nợ 911 để xác định kết quả kinh doanh.',
+              vas: 'VAS 01 – Nguyên tắc Phù hợp trong kỳ.'
+            },
+            { code: '642', name: 'Chi phí quản lý doanh nghiệp', cat: '6', nature: 'Chi phí quản lý', dư: 'Không có số dư', isNew: false,
+              brief: '(Lương ban giám đốc, kế toán, khấu hao văn phòng, dự phòng khó đòi 2293; Nợ phát sinh / Có kết chuyển 911)',
+              dr: 'Lương khối văn phòng (6421), văn phòng phẩm (6423), trích lập dự phòng phải thu khó đòi (6426).',
+              cr: 'Hoàn nhập dự phòng nợ khó đòi; cuối kỳ kết chuyển toàn bộ sang Nợ 911.',
+              vas: 'VAS 01 – Chi phí quản lý chung thời kỳ.'
+            },
+            { code: '821', name: 'Chi phí thuế thu nhập doanh nghiệp', cat: '8', nature: 'Chi phí thuế', dư: 'Không có số dư', isNew: true,
+              brief: '(82111 thuế TNDN hiện hành, 82112 thuế tối thiểu toàn cầu mới TT99; Nợ tính thuế / Có kết chuyển 911)',
+              dr: 'Thuế TNDN hiện hành phải nộp trong năm (82111); thuế TNDN bổ sung theo Pillar 2 (82112 mới TT99).',
+              cr: 'Kết chuyển toàn bộ chi phí thuế TNDN sang Nợ 911 cuối kỳ.',
+              vas: 'VAS 17 – Thuế thu nhập doanh nghiệp & Nghị quyết thuế tối thiểu toàn cầu.'
+            },
+            { code: '911', name: 'Xác định kết quả kinh doanh', cat: '9', nature: 'Tài khoản trung gian', dư: 'Tuyệt đối không số dư', isNew: false,
+              brief: '(Gom Có DT 511, 515, 711 đối chiếu với Nợ CP 632, 641, 642, 635, 821; chênh lệch kết chuyển Lãi sang 4212)',
+              dr: 'Tập hợp Giá vốn hàng bán (632), CP bán hàng (641), CP QLDN (642), Thuế (821); Kết chuyển LÃI sang Có 4212.',
+              cr: 'Tập hợp Doanh thu thuần (511), Doanh thu tài chính (515), Thu nhập khác (711); Kết chuyển LỖ sang Nợ 4212.',
+              vas: 'Khóa sổ kế toán chu kỳ & Đo lường hiệu quả kinh tế.'
+            }
+        ];
+
+        // --- 2. WORKFLOW ENTRIES DATABASE LINKED TO ACCOUNTS ---
+        const workflowEntries = [
+            {
+                related: ['152', '133', '331'],
+                title: 'Nhập kho nguyên vật liệu chưa thanh toán',
+                vas: 'VAS 02 (Đoạn 08) & Luật Thuế GTGT',
+                debit: 'Nợ TK 152: Giá mua chưa thuế + CP vận chuyển<br>Nợ TK 1331: Thuế GTGT đầu vào được khấu trừ',
+                credit: 'Có TK 331: Tổng nợ phải trả theo hóa đơn',
+                reason: '<b>Nguyên tắc Giá gốc:</b> NVL phản ánh toàn bộ chi phí hợp lý đưa hàng về kho. Thuế GTGT đầu vào là tài sản quyền thu của Nhà nước (được khấu trừ bù trừ thuế bán hàng), không phải chi phí cấu thành sản phẩm nên bắt buộc hạch toán riêng vào 1331.'
+            },
+            {
+                related: ['242', '112'],
+                title: 'Trả trước tiền thuê xưởng 1 năm bằng chuyển khoản',
+                vas: 'VAS 01 (Nguyên tắc Phù hợp & Dồn tích)',
+                debit: 'Nợ TK 242: Chi phí chờ phân bổ (TT99 đổi tên từ CP trả trước)<br>Nợ TK 1331: Thuế GTGT được khấu trừ',
+                credit: 'Có TK 112: Tiền gửi không kỳ hạn',
+                reason: 'Nhà xưởng phục vụ sản xuất trong suốt 12 tháng. Nếu ghi hết vào tháng đầu sẽ làm sai lệch nghiêm trọng kết quả kinh doanh (lỗ nặng tháng 1, các tháng sau gánh chi phí 0đ dù vẫn tạo sản phẩm). Treo 242 để mỗi tháng trích đều 1/12 vào 627.'
+            },
+            {
+                related: ['2414', '211'],
+                title: 'Nâng cấp cải tạo dây chuyền tự động hóa (MỚI TT99)',
+                vas: 'VAS 03 (Đoạn 23 - Vốn hóa chi phí sau ban đầu)',
+                debit: 'Bước 1: Nợ TK 2414 / Có 112, 331 (Tập hợp CP nâng cấp)<br>Bước 2: Nợ TK 211 / Có TK 2414 (Nghiệm thu tăng nguyên giá máy)',
+                credit: '',
+                reason: 'Thông tư 99 bổ sung TK 2414 tách bạch: Sửa chữa bảo dưỡng định kỳ (2413/627) thì tính vào CP trong kỳ; nâng cấp kéo dài tuổi thọ hoặc tăng năng suất thì bắt buộc vốn hóa làm tăng nguyên giá TSCĐ (TK 211).'
+            },
+            {
+                related: ['621', '152'],
+                title: 'Xuất kho NVL đưa vào sản xuất trực tiếp',
+                vas: 'VAS 02 & Cơ sở dồn tích',
+                debit: 'Nợ TK 621: Chi phí NVL trực tiếp phát sinh',
+                credit: 'Có TK 152: Giảm trị giá NVL tồn kho',
+                reason: 'Chuyển hóa hình thái tài sản: NVL từ dạng dự trữ trong kho (152) chuyển thành chi phí kinh doanh phát sinh trong kỳ (621). Chỉ tính những vật tư cấu thành trực tiếp nên sản phẩm theo định mức kỹ thuật.'
+            },
+            {
+                related: ['622', '334', '338'],
+                title: 'Tính lương & trích BHXH công nhân sản xuất trực tiếp',
+                vas: 'VAS 02 (Chi phí chế biến) & Luật BHXH',
+                debit: 'Nợ TK 622: Lương công nhân + 23.5% BHXH doanh nghiệp chịu',
+                credit: 'Có TK 334: Tổng lương phải trả người lao động<br>Có TK 338: 34% BHXH, BHYT, BHTN, KPCĐ phải nộp NSNN',
+                reason: 'Sức lao động đứng máy là chi phí cấu thành sản phẩm. Doanh nghiệp chịu 23.5% bảo hiểm theo luật bắt buộc phải tính vào chi phí nhân công trực tiếp (622), người lao động chịu 10.5% trừ trực tiếp vào lương (334).'
+            },
+            {
+                related: ['154', '621', '622', '627'],
+                title: 'Cuối kỳ kết chuyển chi phí tính giá thành dở dang',
+                vas: 'VAS 02 (Phương pháp Kê khai thường xuyên)',
+                debit: 'Nợ TK 154: Chi phí sản xuất kinh doanh dở dang',
+                credit: 'Có TK 621: Kết chuyển CP NVL trực tiếp<br>Có TK 622: Kết chuyển CP nhân công TT<br>Có TK 627: Kết chuyển CP sản xuất chung',
+                reason: 'Các TK Loại 6 chỉ là tài khoản tập hợp chi phí thời kỳ, không có số dư. Toàn bộ chi phí sản xuất trong tháng đang kết tinh vào khối lượng sản phẩm dở dang trên chuyền (TK 154). Dư Nợ 154 là giá trị dở dang cuối kỳ.'
+            },
+            {
+                related: ['155', '154', '632'],
+                title: 'Nghiệm thu nhập kho sản phẩm & Xử lý vượt định mức',
+                vas: 'VAS 02 (Đoạn 11 & Đoạn 14)',
+                debit: 'Sản phẩm đạt chuẩn: Nợ TK 155 / Có TK 154 (Theo giá thành thực tế)<br>Phần chi phí vượt định mức: Nợ TK 632 / Có TK 154',
+                credit: '',
+                reason: '<b>Nguyên tắc Thận trọng:</b> Nếu nhà máy vận hành lỗi làm tiêu hao NVL vượt định mức, chuẩn mực cấm không được cộng phần lãng phí này vào giá trị sản phẩm 155 (vì sẽ thổi phồng tài sản ảo). Toàn bộ chi phí lãng phí phải tống thẳng vào Giá vốn 632.'
+            },
+            {
+                related: ['215', '627'],
+                title: 'Khấu hao đàn bò sữa cho sản phẩm định kỳ (MỚI TT99)',
+                vas: 'Tiệm cận IAS 41 (Nông nghiệp) trong TT99',
+                debit: 'Nợ TK 627: Chi phí sản xuất chung (khấu hao sinh học)',
+                credit: 'Có TK 215122: Hao mòn tích lũy súc vật nuôi định kỳ',
+                reason: 'Đàn bò sữa sau khi trưởng thành (chuyển sang 215121) được trích khấu hao tương tự như TSCĐ máy móc vì mang lại dòng sản phẩm sữa tươi liên tục trong nhiều chu kỳ khai thác.'
+            },
+            {
+                related: ['511', '632', '155', '131'],
+                title: 'Xuất bán sản phẩm & Ghi nhận doanh thu song hành',
+                vas: 'VAS 14 (5 điều kiện ghi nhận DT) & VAS 01 (Phù hợp)',
+                debit: 'Bút toán Giá vốn: Nợ TK 632 / Có TK 155 (Giảm kho SP theo giá thành)<br>Bút toán Doanh thu: Nợ TK 131 / Có TK 511, Có TK 33311 (Doanh thu & VAT)',
+                credit: '',
+                reason: '<b>Nguyên tắc Phù hợp sống còn:</b> Khi ghi nhận một khoản doanh thu (511) thì bắt buộc phải ghi nhận chi phí tương ứng tạo ra nó (632). Hiệu số giữa Doanh thu và Giá vốn phản ánh chính xác Lợi nhuận gộp của doanh nghiệp.'
+            },
+            {
+                related: ['131', '112'],
+                title: 'Khách hàng đặt cọc tiền trước khi nhận hàng',
+                vas: 'VAS 14 & Nguyên tắc Thận trọng',
+                debit: 'Nợ TK 112: Tiền gửi ngân hàng tăng',
+                credit: 'Có TK 131: Dư Có tài khoản phải thu khách hàng',
+                reason: 'Dù đã nhận được tiền nhưng doanh nghiệp chưa chuyển giao rủi ro và quyền sở hữu hàng cho khách. Doanh nghiệp vẫn đang mang nghĩa vụ nợ phải giao hàng $\rightarrow$ Bắt buộc treo Dư Có 131, tuyệt đối không được ghi nhận Doanh thu 511.'
+            },
+            {
+                related: ['821', '3334'],
+                title: 'Chi phí thuế TNDN bổ sung Pillar 2 (MỚI TT99)',
+                vas: 'VAS 17 & Nghị quyết Thuế Tối thiểu Toàn cầu',
+                debit: 'Nợ TK 82112: Chi phí thuế TNDN bổ sung theo thuế tối thiểu toàn cầu',
+                credit: 'Có TK 3334: Thuế TNDN phải nộp NSNN',
+                reason: 'Áp dụng cho các tập đoàn đa quốc gia có doanh thu hợp nhất từ 750 triệu EUR trở lên theo cơ chế Pillar 2 của OECD. TT99 tạo riêng TK 82112 để hạch toán rành mạch khoản thuế bổ sung này, phân biệt với thuế TNDN hiện hành theo luật nội địa (82111).'
+            },
+            {
+                related: ['421', '332'],
+                title: 'Công bố quyết định chia cổ tức cho cổ đông (MỚI TT99)',
+                vas: 'Cơ sở dồn tích & Luật Doanh nghiệp',
+                debit: 'Nợ TK 421: Lợi nhuận sau thuế chưa phân phối giảm',
+                credit: 'Có TK 332: Phải trả cổ tức, lợi nhuận (Tách riêng khỏi 3388)',
+                reason: 'Khi ĐHĐCĐ ra Nghị quyết chia cổ tức, khoản lợi nhuận giữ lại đã chuyển hóa thành nghĩa vụ nợ pháp lý đối với cổ đông. TT99 tách riêng TK 332 giúp các nhà đầu tư và kiểm toán viên giám sát minh bạch dòng tiền chi trả cổ tức.'
+            },
+            {
+                related: ['911', '511', '632', '641', '642', '421'],
+                title: 'Khóa sổ cuối kỳ xác định kết quả kinh doanh & Kết chuyển lãi',
+                vas: 'VAS 01 – Đoạn kết quả kinh doanh',
+                debit: 'Kết chuyển DT: Nợ TK 511 / Có TK 911<br>Kết chuyển CP: Nợ TK 911 / Có TK 632, 641, 642, 821<br>Kết chuyển LÃI: Nợ TK 911 / Có TK 4212',
+                credit: '',
+                reason: 'Tài khoản 911 là tài khoản trung gian đối ứng. Toàn bộ doanh thu gom về bên Có, toàn bộ chi phí gom về bên Nợ. Chênh lệch doanh thu lớn hơn chi phí là lãi thuần, kết chuyển sang Có 4212. Tài khoản 911 tuyệt đối không có số dư.'
+            }
+        ];
+
+        // --- 3. RENDER FUNCTIONS ---
+        function renderSidebar(accountsToRender) {
+            const container = document.getElementById('sidebar-account-list');
+            container.innerHTML = '';
+
+            const categories = [
+                { id: '1', title: 'Loại 1: Tài Sản Ngắn Hạn' },
+                { id: '2', title: 'Loại 2: Tài Sản Dài Hạn' },
+                { id: '3', title: 'Loại 3: Nợ Phải Trả' },
+                { id: '4', title: 'Loại 4: Vốn Chủ Sở Hữu' },
+                { id: '5', title: 'Loại 5: Doanh Thu' },
+                { id: '6', title: 'Loại 6: Chi Phí Sản Xuất KD' },
+                { id: '8', title: 'Loại 8: Chi Phí Thuế TNDN' },
+                { id: '9', title: 'Loại 9: Xác Định Kết Quả' }
+            ];
+
+            categories.forEach(cat => {
+                const accsInCat = accountsToRender.filter(a => a.cat === cat.id);
+                if (accsInCat.length === 0) return;
+
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'account-group';
+
+                const groupTitle = document.createElement('div');
+                groupTitle.className = 'group-title';
+                groupTitle.innerHTML = `<span>${cat.title}</span><span>(${accsInCat.length})</span>`;
+                groupDiv.appendChild(groupTitle);
+
+                accsInCat.forEach(acc => {
+                    const item = document.createElement('div');
+                    item.className = 'account-item';
+                    item.id = `sidebar-item-${acc.code}`;
+                    item.onclick = () => inspectAccount(acc.code);
+
+                    item.innerHTML = `
+                        <div class="acc-code-title">
+                            <span class="code-pill">${acc.code}</span>
+                            <span>${acc.name}</span>
+                            ${acc.isNew ? '<span class="tag-new">MỚI TT99</span>' : ''}
+                        </div>
+                        <div class="acc-info-brief">${acc.brief}</div>
+                    `;
+                    groupDiv.appendChild(item);
+                });
+
+                container.appendChild(groupDiv);
+            });
+        }
+
+        function inspectAccount(code) {
+            const acc = accountsDB.find(a => a.code === code);
+            if (!acc) return;
+
+            // Update Inspector Card
+            document.getElementById('insp-code').innerText = acc.code;
+            document.getElementById('insp-nature').innerText = `${acc.nature} · Số dư: ${acc.dư}`;
+            document.getElementById('insp-badge-new').innerHTML = acc.isNew ? '<span class="tag-new">ĐIỂM MỚI TT 99/2025</span>' : '';
+            document.getElementById('insp-title').innerText = `Tài Khoản ${acc.code} – ${acc.name}`;
+            document.getElementById('insp-summary').innerHTML = `<strong>Mở Ngoặc Thông Tin Sơ Bộ:</strong><br>${acc.brief}`;
+            document.getElementById('insp-debit-text').innerHTML = acc.dr;
+            document.getElementById('insp-credit-text').innerHTML = acc.cr;
+            document.getElementById('insp-vas').innerText = acc.vas;
+
+            // Highlight Sidebar item
+            document.querySelectorAll('.account-item').forEach(el => el.classList.remove('active'));
+            const sideEl = document.getElementById(`sidebar-item-${code}`);
+            if (sideEl) {
+                sideEl.classList.add('active');
+                sideEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            // Highlight Flowchart node
+            document.querySelectorAll('.flow-node').forEach(el => el.classList.remove('active-node'));
+            document.querySelectorAll('.flow-node').forEach(el => {
+                if (el.querySelector('.node-code') && el.querySelector('.node-code').innerText === code) {
+                    el.classList.add('active-node');
+                }
+            });
+
+            // Filter Workflow List
+            renderWorkflowList(code);
+        }
+
+        function renderWorkflowList(filterCode) {
+            const container = document.getElementById('workflow-list-container');
+            container.innerHTML = '';
+
+            let list = workflowEntries;
+            if (filterCode && filterCode !== 'all') {
+                list = workflowEntries.filter(w => w.related.includes(filterCode));
+                if (list.length === 0) list = workflowEntries; // fallback if no specific
+            }
+
+            list.forEach(wf => {
+                const item = document.createElement('div');
+                item.className = 'workflow-item';
+                item.innerHTML = `
+                    <div class="wf-title">
+                        <span>📌 ${wf.title}</span>
+                        <span class="wf-vas">${wf.vas}</span>
+                    </div>
+                    <div class="wf-entries">
+                        <div class="wf-debit">${wf.debit}</div>
+                        ${wf.credit ? `<div class="wf-credit">${wf.credit}</div>` : ''}
+                    </div>
+                    <div class="wf-reason">
+                        💡 <b>Tại sao ghi như vậy:</b> ${wf.reason}
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function searchAccounts() {
+            const kw = document.getElementById('acc-search-input').value.toLowerCase().trim();
+            if (!kw) {
+                renderSidebar(accountsDB);
+                return;
+            }
+            const filtered = accountsDB.filter(a => 
+                a.code.toLowerCase().includes(kw) || 
+                a.name.toLowerCase().includes(kw) || 
+                a.brief.toLowerCase().includes(kw)
+            );
+            renderSidebar(filtered);
+        }
+
+        function resetToOverview() {
+            inspectAccount('154');
+            renderWorkflowList('all');
+        }
+
+        function filterByLane(lane) {
+            renderWorkflowList('all');
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            renderSidebar(accountsDB);
+            inspectAccount('154'); // default focus on 154
+        });
+    </script>
+</body>
+</html>

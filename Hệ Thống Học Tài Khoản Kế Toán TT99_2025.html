@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Hệ Thống Kế Toán TT99/2025 – Học Tài Khoản</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F0F4F8;
+  --surface: #FFFFFF;
+  --border: #DDE3EA;
+  --primary: #2563EB;
+  --primary-light: #EFF6FF;
+  --primary-mid: #BFDBFE;
+  --text: #1E293B;
+  --text-muted: #64748B;
+  --green: #15803D;
+  --green-bg: #F0FDF4;
+  --green-border: #BBF7D0;
+  --red: #B91C1C;
+  --red-bg: #FEF2F2;
+  --red-border: #FECACA;
+  --yellow-bg: #FEFCE8;
+  --yellow-border: #FDE68A;
+  --yellow: #92400E;
+  --purple-bg: #F5F3FF;
+  --purple-border: #DDD6FE;
+  --purple: #6D28D9;
+  --radius: 12px;
+  --sidebar-full: 300px;
+  --sidebar-mini: 56px;
+  --header: 58px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── HEADER ─────────────────────────────────────────── */
+header {
+  height: var(--header);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 14px;
+  flex-shrink: 0;
+  z-index: 50;
+}
+
+.tt-pill {
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.header-title { flex: 1; }
+.header-title h1 { font-size: 0.95rem; font-weight: 800; color: var(--text); line-height: 1.2; }
+.header-title p { font-size: 0.72rem; color: var(--text-muted); }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: 8px;
+  font-size: 0.8rem; font-weight: 600; cursor: pointer;
+  border: none; transition: all 0.18s;
+  font-family: inherit;
+}
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: #1D4ED8; }
+.btn-outline {
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-outline:hover { background: var(--primary-light); border-color: var(--primary-mid); color: var(--primary); }
+
+/* ── APP SHELL ──────────────────────────────────────── */
+.shell {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── SIDEBAR ────────────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar-full);
+  min-width: var(--sidebar-full);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s cubic-bezier(0.4,0,0.2,1),
+              min-width 0.3s cubic-bezier(0.4,0,0.2,1);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.sidebar.mini {
+  width: var(--sidebar-mini);
+  min-width: var(--sidebar-mini);
+}
+
+/* sidebar top bar */
+.sidebar-bar {
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.sidebar-bar-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sidebar-title {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--text);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: opacity 0.2s;
+}
+.mini .sidebar-title { opacity: 0; width: 0; }
+
+.toggle-btn {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.18s;
+  font-size: 1rem;
+}
+.toggle-btn:hover { background: var(--primary-light); border-color: var(--primary-mid); }
+
+.search-wrap {
+  position: relative;
+  transition: opacity 0.2s;
+}
+.mini .search-wrap { opacity: 0; pointer-events: none; }
+
+.search-wrap input {
+  width: 100%;
+  padding: 7px 10px 7px 30px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font-size: 0.78rem;
+  outline: none;
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+.search-wrap input:focus { border-color: var(--primary); }
+.search-wrap .ico {
+  position: absolute; left: 9px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.8rem; color: var(--text-muted);
+}
+
+/* sidebar list */
+.sidebar-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px 6px;
+}
+
+.cat-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 4px 6px;
+  margin: 8px 0 4px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: opacity 0.2s;
+}
+.mini .cat-label { opacity: 0; }
+
+.acc-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+  margin-bottom: 2px;
+  overflow: hidden;
+}
+.acc-item:hover { background: var(--primary-light); border-color: var(--primary-mid); }
+.acc-item.active {
+  background: var(--primary-light);
+  border-color: var(--primary);
+}
+
+.acc-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 6px;
+  color: var(--primary);
+  flex-shrink: 0;
+  min-width: 36px;
+  text-align: center;
+  transition: all 0.15s;
+}
+.acc-item.active .acc-chip {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+.acc-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  transition: opacity 0.2s;
+}
+.mini .acc-label { opacity: 0; width: 0; flex: 0; }
+
+.new-dot {
+  width: 6px; height: 6px;
+  background: #EF4444;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
+}
+.mini .new-dot { opacity: 0; }
+
+/* ── MAIN STAGE ─────────────────────────────────────── */
+.stage {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+/* OVERVIEW PANEL */
+.panel-overview {
+  position: absolute; inset: 0;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: opacity 0.3s, transform 0.3s;
+}
+.panel-overview.hidden {
+  opacity: 0;
+  transform: translateX(-24px);
+  pointer-events: none;
+}
+
+/* DETAIL PANEL */
+.panel-detail {
+  position: absolute; inset: 0;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  opacity: 0;
+  transform: translateX(24px);
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s;
+}
+.panel-detail.visible {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: all;
+}
+
+/* ── OVERVIEW: FLOWCHART ────────────────────────────── */
+.flow-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+
+.flow-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.flow-card-head h2 {
+  font-size: 0.9rem;
+  font-weight: 800;
+  display: flex; align-items: center; gap: 8px;
+}
+
+.hint { font-size: 0.72rem; color: var(--text-muted); }
+
+.lanes {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.lane {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+.lane-hd {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--primary);
+  border-bottom: 2px solid var(--primary-mid);
+  padding-bottom: 6px;
+}
+
+.f-node {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.f-node:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(37,99,235,0.12);
+}
+.f-node.hl {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  box-shadow: 0 0 0 2px var(--primary-mid);
+}
+.f-node.center-node {
+  border: 2px solid var(--primary);
+  background: var(--primary-light);
+}
+
+.fn-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
+.fn-code { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; font-weight: 800; color: var(--primary); }
+.fn-badge {
+  font-size: 0.6rem; font-weight: 700; padding: 2px 5px; border-radius: 4px;
+}
+.b-asset { background:#E0F2FE; color:#0369A1; }
+.b-cost  { background:#FEF3C7; color:#B45309; }
+.b-rev   { background:#DCFCE7; color:#15803D; }
+.b-liab  { background:#F3E8FF; color:#7E22CE; }
+.b-eq    { background:#FFEDD5; color:#C2410C; }
+
+.fn-name { font-size: 0.78rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.fn-desc { font-size: 0.68rem; color: var(--text-muted); line-height: 1.35; }
+
+/* ── DETAIL LAYOUT ──────────────────────────────────── */
+/* Top breadcrumb bar inside detail */
+.detail-topbar {
+  display: flex; align-items: center; gap: 10px;
+  flex-wrap: wrap;
+}
+.detail-topbar .back-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 0.78rem; font-weight: 600;
+  color: var(--primary); cursor: pointer;
+  padding: 5px 10px; border-radius: 7px;
+  background: var(--primary-light); border: 1px solid var(--primary-mid);
+  transition: all 0.15s;
+}
+.detail-topbar .back-btn:hover { background: var(--primary-mid); }
+
+.detail-code-big {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.5rem; font-weight: 800; color: var(--primary);
+}
+.detail-name-big { font-size: 1rem; font-weight: 800; color: var(--text); }
+.new-badge {
+  background: #FEE2E2; color: #DC2626;
+  font-size: 0.65rem; font-weight: 800;
+  padding: 2px 7px; border-radius: 20px;
+}
+
+/* Detail body: 2 column on wide, stack on narrow */
+.detail-body {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .detail-body { grid-template-columns: 1fr; }
+  .lanes { grid-template-columns: repeat(3,1fr); }
+}
+
+.dcard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+
+.dcard-title {
+  font-size: 0.82rem; font-weight: 800;
+  display: flex; align-items: center; gap: 7px;
+  padding-bottom: 10px; border-bottom: 1px solid var(--border);
+}
+
+.info-box {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.nature-row {
+  display: flex; gap: 10px;
+  font-size: 0.78rem;
+}
+.nr-item { flex: 1; }
+.nr-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; }
+.nr-val { font-weight: 700; color: var(--text); }
+
+.dr-cr { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.dr-box {
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+  border-radius: 8px; padding: 10px;
+  font-size: 0.75rem; line-height: 1.5;
+}
+.dr-box-title { font-weight: 800; color: var(--green); font-size: 0.72rem; margin-bottom: 5px; }
+
+.cr-box {
+  background: var(--red-bg);
+  border: 1px solid var(--red-border);
+  border-radius: 8px; padding: 10px;
+  font-size: 0.75rem; line-height: 1.5;
+}
+.cr-box-title { font-weight: 800; color: var(--red); font-size: 0.72rem; margin-bottom: 5px; }
+
+.vas-box {
+  background: var(--purple-bg);
+  border-left: 4px solid var(--purple);
+  border-radius: 0 8px 8px 0;
+  padding: 10px 12px;
+  font-size: 0.78rem; line-height: 1.5;
+}
+.vas-box-title { font-weight: 800; color: var(--purple); margin-bottom: 3px; }
+
+/* Mini flow diagram inside detail */
+.mini-flow {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+}
+.mf-node {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 5px 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: var(--text-muted);
+}
+.mf-node:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+.mf-node.mf-active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.mf-arrow { color: var(--primary); font-weight: 800; font-size: 1rem; }
+
+/* Workflow entries */
+.wf-list { display: flex; flex-direction: column; gap: 10px; }
+
+.wf-item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  transition: all 0.15s;
+}
+.wf-item:hover { border-color: var(--primary); background: var(--primary-light); }
+
+.wf-head {
+  display: flex; justify-content: space-between;
+  align-items: flex-start; gap: 8px;
+  margin-bottom: 8px;
+}
+.wf-name { font-size: 0.8rem; font-weight: 800; color: var(--text); }
+.wf-vas-tag {
+  font-size: 0.65rem; font-weight: 700;
+  background: var(--purple-bg); color: var(--purple);
+  border: 1px solid var(--purple-border);
+  border-radius: 20px; padding: 2px 7px;
+  white-space: nowrap; flex-shrink: 0;
+}
+
+.entry-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 8px 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  margin-bottom: 7px;
+}
+.e-dr { color: var(--green); font-weight: 700; }
+.e-cr { color: var(--red); font-weight: 700; padding-left: 16px; }
+
+.wf-why {
+  background: var(--yellow-bg);
+  border: 1px solid var(--yellow-border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--yellow);
+}
+
+/* empty state */
+.empty-state {
+  text-align: center; padding: 30px 20px;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="tt-pill">TT 99/2025/TT-BTC</span>
+  <div class="header-title">
+    <h1>Hệ Thống Học Tài Khoản Kế Toán Sản Xuất</h1>
+    <p>Chọn mã từ sidebar để xem chi tiết · 5 làn quy trình liên kết VAS 01/02/03/14/17</p>
+  </div>
+  <button class="btn btn-outline" id="btn-overview" onclick="showOverview()">🗺️ Xem Toàn Cảnh</button>
+</header>
+
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-bar">
+      <div class="sidebar-bar-top">
+        <span class="sidebar-title">📚 Danh Mục Tài Khoản</span>
+        <div class="toggle-btn" onclick="toggleSidebar()" title="Thu/mở sidebar">⇄</div>
+      </div>
+      <div class="search-wrap">
+        <span class="ico">🔍</span>
+        <input type="text" id="search-input" placeholder="Tìm mã TK hoặc tên..." oninput="searchAccounts()">
+      </div>
+    </div>
+    <div class="sidebar-list" id="sidebar-list"></div>
+  </aside>
+
+  <!-- STAGE -->
+  <main class="stage">
+
+    <!-- OVERVIEW PANEL -->
+    <div class="panel-overview" id="panel-overview">
+
+      <div class="flow-card">
+        <div class="flow-card-head">
+          <h2>🗺️ Sơ Đồ Dòng Chảy Kế Toán Sản Xuất – 5 Làn Quy Trình</h2>
+          <span class="hint">Nhấp vào thẻ bất kỳ để xem chi tiết toàn màn hình</span>
+        </div>
+        <div class="lanes" id="flowchart-lanes"></div>
+      </div>
+
+      <!-- All workflow entries overview -->
+      <div class="flow-card">
+        <div class="flow-card-head">
+          <h2>📋 Toàn Bộ Bút Toán & Lý Do Ghi Nhận</h2>
+          <span class="hint">Tất cả <span id="wf-count">0</span> bút toán trong hệ thống</span>
+        </div>
+        <div class="wf-list" id="all-wf-list"></div>
+      </div>
+
+    </div>
+
+    <!-- DETAIL PANEL -->
+    <div class="panel-detail" id="panel-detail">
+
+      <div class="detail-topbar">
+        <div class="back-btn" onclick="showOverview()">← Toàn Cảnh</div>
+        <span class="detail-code-big" id="d-code">154</span>
+        <span class="detail-name-big" id="d-name">Chi Phí Sản Xuất Dở Dang</span>
+        <span class="new-badge" id="d-new" style="display:none">MỚI TT99</span>
+      </div>
+
+      <div class="detail-body">
+
+        <!-- LEFT: concept + dr/cr + vas + mini flow -->
+        <div>
+          <div class="dcard">
+            <div class="dcard-title">📖 Khái Niệm & Bản Chất Tài Khoản</div>
+
+            <div class="nature-row">
+              <div class="nr-item">
+                <div class="nr-label">Phân Loại</div>
+                <div class="nr-val" id="d-nature">—</div>
+              </div>
+              <div class="nr-item">
+                <div class="nr-label">Số Dư</div>
+                <div class="nr-val" id="d-dur">—</div>
+              </div>
+            </div>
+
+            <div class="info-box" id="d-brief">—</div>
+
+            <div class="dr-cr">
+              <div class="dr-box">
+                <div class="dr-box-title">➕ BÊN NỢ (DEBIT)</div>
+                <div id="d-dr">—</div>
+              </div>
+              <div class="cr-box">
+                <div class="cr-box-title">➖ BÊN CÓ (CREDIT)</div>
+                <div id="d-cr">—</div>
+              </div>
+            </div>
+
+            <div class="vas-box">
+              <div class="vas-box-title">⚖️ Căn Cứ VAS & Pháp Lý</div>
+              <div id="d-vas">—</div>
+            </div>
+
+            <div>
+              <div class="dcard-title" style="border-bottom:none; padding-bottom:0; margin-bottom:8px;">🔗 Tài Khoản Liên Quan Trong Luồng</div>
+              <div class="mini-flow" id="d-mini-flow"></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- RIGHT: workflow entries -->
+        <div class="dcard">
+          <div class="dcard-title">📌 Bút Toán Đối Ứng (Tại Sao Ghi Như Vậy?)</div>
+          <div class="wf-list" id="d-wf-list"></div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ── DATA ────────────────────────────────────────────────────────
+const DB = [
+  { code:'111', name:'Tiền mặt', cat:'1', catName:'Loại 1 – Tài Sản Ngắn Hạn',
+    nature:'Tài sản ngắn hạn', dur:'Bên Nợ', isNew:false,
+    brief:'Tiền mặt tồn tại quỹ. Nợ thu tiền vào / Có chi tiền ra. Luôn Dư Nợ.',
+    dr:'Thu tiền bán hàng, thu nợ KH, rút TGNH về quỹ, thừa kiểm kê quỹ.',
+    cr:'Chi trả tiền nhà cung cấp, chi tạm ứng, trả lương, nộp vào ngân hàng.',
+    vas:'VAS 01 (Cơ sở dồn tích) & TT 99 Phụ lục II.',
+    related:['112','131','331','141'],
+    flowLane:1, badge:'b-asset', badgeText:'Tiền'
+  },
+  { code:'112', name:'Tiền gửi không kỳ hạn', cat:'1', catName:'Loại 1 – Tài Sản Ngắn Hạn',
+    nature:'Tài sản ngắn hạn', dur:'Bên Nợ', isNew:true,
+    brief:'TT99 đổi tên từ TGNH. Tài khoản thanh toán không kỳ hạn tại ngân hàng. Nợ nhận chuyển khoản / Có chi trả. Dư Nợ.',
+    dr:'Khách hàng thanh toán qua ngân hàng; nộp tiền mặt vào tài khoản; thu lãi tiền gửi.',
+    cr:'Chuyển khoản thanh toán người bán; nộp thuế điện tử; trả gốc/lãi vay ngân hàng.',
+    vas:'TT99 làm rõ bản chất không kỳ hạn, tách biệt với tiền gửi có kỳ hạn (TK 1281).',
+    related:['111','331','338','133'],
+    flowLane:1, badge:'b-asset', badgeText:'Tiền Gửi'
+  },
+  { code:'113', name:'Tiền đang chuyển', cat:'1', catName:'Loại 1 – Tài Sản Ngắn Hạn',
+    nature:'Tài sản ngắn hạn', dur:'Bên Nợ', isNew:false,
+    brief:'Tiền đã nộp hoặc chi chuyển nhưng chưa nhận được Giấy báo Nợ/Có của ngân hàng cuối ngày.',
+    dr:'Nộp tiền vào ngân hàng nhưng chưa có giấy báo có; chuyển tiền chi trả chưa hoàn tất.',
+    cr:'Ngân hàng phát hành Giấy báo Có/Nợ xác nhận tiền đã vào tài khoản người nhận.',
+    vas:'Cơ sở dồn tích & Nguyên tắc Thận trọng.',
+    related:['111','112'],
+    flowLane:1, badge:'b-asset', badgeText:'Tiền'
+  },
+  { code:'121', name:'Chứng khoán kinh doanh', cat:'1', catName:'Loại 1 – Tài Sản Ngắn Hạn',
+    nature:'Tài sản ngắn hạn', dur:'Bên Nợ', isNew:false,
+    brief:'Cổ phiếu, trái phiếu mua bán kiếm lời chênh lệch giá ngắn hạn. Nợ mua vào / Có bán ra.',
+    dr:'Giá mua cổ phiếu, trái phiếu + chi phí môi giới giao dịch phát sinh ban đầu.',
+    cr:'Giá gốc chứng khoán xuất bán (tính theo bình quân gia quyền hoặc FIFO).',
+    vas:'VAS 08 & Nguyên tắc Giá gốc.',
+    related:['112','515'],
+    flowLane:1, badge:'b-asset', badgeText:'Đầu Tư'
+  },
+  { code:'128', name:'Đầu tư nắm giữ đến đáo hạn', cat:'1', catName:'Loại 1 – Tài Sản Ngắn Hạn',
+    nature:'Tài sản tài chính', dur:'Bên Nợ', isNew:false,
+    brief:'Tiền gửi có kỳ hạn (1281), cho vay (1283), trái phiếu (1282) giữ đến hạn hưởng lãi cố định.',
+    dr:'Gửi tiết kiệm có kỳ hạn tại ngân hàng; cho vay các bên; mua trái phiếu giữ đến đáo hạn.',
+    cr:'Thu hồi tiền gửi khi đáo hạn; thu hồi nợ gốc cho vay.',
+    vas:'Phân loại công cụ tài chính theo kỳ hạn sinh lời.',
+    related:['112','515'],
+    flowLane:1, badge:'b-asset', badgeText:'Đầu Tư'
+  },
+  { code:'131', name:'Phải thu của khách hàng', cat:'1', catName:'Loại 1 – Tài Sản Ngắn Hạn',
+    nature:'Tài sản (Lưỡng tính)', dur:'Dư Nợ hoặc Dư Có', isNew:false,
+    brief:'Dư Nợ: KH nợ tiền hàng. Dư Có: KH trả cọc tiền trước — cấm ghi DT khi chưa giao hàng. Lưỡng tính nguy hiểm.',
+    dr:'Số tiền phải thu khi bàn giao sản phẩm, xuất hóa đơn bán chịu cho khách hàng.',
+    cr:'Khách hàng thanh toán tiền; chiết khấu giảm giá trừ nợ; khách trả trước tiền cọc.',
+    vas:'VAS 14 (5 điều kiện ghi nhận DT) & VAS 01 (Thận trọng).',
+    related:['511','112','2293'],
+    flowLane:5, badge:'b-asset', badgeText:'Phải Thu'
+  },
+  { code:'133', name:'Thuế GTGT được khấu trừ', cat:'1', catName:'Loại 1 – Tài Sản Ngắn Hạn',
+    nature:'Tài sản ngắn hạn', dur:'Bên Nợ', isNew:false,
+    brief:'Quyền tài sản thuế đầu vào được hoàn hoặc bù trừ với thuế bán hàng. Nợ phát sinh khi mua / Có cấn trừ 3331.',
+    dr:'Thuế GTGT đầu vào hợp lệ khi mua NVL, tài sản, dịch vụ phục vụ sản xuất.',
+    cr:'Bù trừ với thuế GTGT đầu ra (3331) cuối kỳ; hoàn thuế từ Kho bạc Nhà nước.',
+    vas:'Luật Thuế GTGT & VAS 02 (Thuế được hoàn không tính vào giá gốc HTK).',
+    related:['152','331','3331'],
+    flowLane:1, badge:'b-asset', badgeText:'Thuế'
+  },
+  { code:'138', name:'Phải thu khác', cat:'1', catName:'Loại 1 – Tài Sản Ngắn Hạn',
+    nature:'Tài sản (Lưỡng tính)', dur:'Dư Nợ / Dư Có', isNew:true,
+    brief:'1381 thiếu chờ xử lý; 1383 Thuế TTĐB hàng NK (MỚI TT99); 1388 phải thu khác ngoài thương mại.',
+    dr:'Tài sản phát hiện thiếu chưa rõ nguyên nhân; thuế TTĐB hàng nhập khẩu được hoàn (1383 mới).',
+    cr:'Kết chuyển xử lý tài sản thiếu trừ lương thủ kho; nhận tiền hoàn thuế TTĐB.',
+    vas:'TT99 bổ sung TK 1383 để minh bạch nghĩa vụ thuế TTĐB hàng nhập khẩu.',
+    related:['112','642'],
+    flowLane:1, badge:'b-asset', badgeText:'Phải Thu'
+  },
+  { code:'141', name:'Tạm ứng', cat:'1', catName:'Loại 1 – Tài Sản Ngắn Hạn',
+    nature:'Tài sản ngắn hạn', dur:'Bên Nợ', isNew:false,
+    brief:'Tiền giao cho nhân viên đi công tác hoặc mua sắm vật tư chưa quyết toán chứng từ.',
+    dr:'Xuất tiền mặt/chuyển khoản tạm ứng cho nhân viên theo đề xuất phê duyệt.',
+    cr:'Quyết toán số tiền đã chi theo hóa đơn hợp lệ; thu hồi tiền tạm ứng thừa nhập lại quỹ.',
+    vas:'Nguyên tắc quản trị tài chính nội bộ.',
+    related:['111','112','621','627'],
+    flowLane:1, badge:'b-asset', badgeText:'Tạm Ứng'
+  },
+  { code:'151', name:'Hàng mua đang đi đường', cat:'1', catName:'Loại 1 – Tài Sản Ngắn Hạn',
+    nature:'Hàng tồn kho', dur:'Bên Nợ', isNew:false,
+    brief:'Hóa đơn đã về và thuộc quyền sở hữu nhưng hàng còn đang vận chuyển chưa nhập kho.',
+    dr:'Trị giá hàng hóa, NVL đã mua có hóa đơn nhưng cuối tháng hàng chưa về đến kho.',
+    cr:'Hàng về đến kho, làm biên bản kiểm nghiệm nhập kho chuyển sang 152, 153, 156.',
+    vas:'VAS 02 & Cơ sở dồn tích.',
+    related:['152','331'],
+    flowLane:2, badge:'b-asset', badgeText:'Kho'
+  },
+  { code:'152', name:'Nguyên liệu, vật liệu', cat:'1', catName:'Loại 1 – Tài Sản Ngắn Hạn',
+    nature:'Hàng tồn kho', dur:'Bên Nợ', isNew:false,
+    brief:'Trị giá NVL chính, phụ nhập kho. Nợ nhập kho giá gốc / Có xuất sản xuất 621. Luôn Dư Nợ.',
+    dr:'Trị giá NVL mua ngoài nhập kho (giá mua + CP vận chuyển bốc dỡ) hoặc tự chế hoàn thành.',
+    cr:'Xuất kho NVL đưa vào sản xuất trực tiếp (621); xuất cho quản lý xưởng (627); xuất bán.',
+    vas:'VAS 02 – Hàng tồn kho (Đoạn 08: Nguyên tắc Giá gốc).',
+    related:['331','133','621','151'],
+    flowLane:2, badge:'b-asset', badgeText:'Kho NVL'
+  },
+  { code:'153', name:'Công cụ, dụng cụ', cat:'1', catName:'Loại 1 – Tài Sản Ngắn Hạn',
+    nature:'Hàng tồn kho', dur:'Bên Nợ', isNew:false,
+    brief:'CCDC tồn kho phục vụ sản xuất. Xuất dùng loại lớn qua 242 phân bổ dần vào 627. Dư Nợ.',
+    dr:'Nhập kho CCDC mua ngoài hoặc tự chế; phát hiện thừa khi kiểm kê.',
+    cr:'Xuất dùng CCDC cho phân xưởng (loại 1 lần vào 627; nhiều lần qua 242).',
+    vas:'VAS 02 & Nguyên tắc Phù hợp.',
+    related:['627','242'],
+    flowLane:2, badge:'b-asset', badgeText:'CCDC'
+  },
+  { code:'154', name:'Chi phí sản xuất kinh doanh dở dang', cat:'1', catName:'Loại 1 – Tài Sản Ngắn Hạn',
+    nature:'Hàng tồn kho – Trọng Tâm Giá Thành', dur:'Bên Nợ',  isNew:false,
+    brief:'Tài khoản trung tâm tập hợp toàn bộ CP sản xuất (621+622+627) để tính giá thành sản phẩm. Dư Nợ = giá trị dở dang cuối kỳ.',
+    dr:'Cuối kỳ kết chuyển toàn bộ chi phí sản xuất từ TK 621, 622, 627.',
+    cr:'Giá thành công xưởng thực tế của sản phẩm hoàn thành nhập kho (155) hoặc xuất bán (632).',
+    vas:'VAS 02 – Hàng tồn kho (Chi phí chế biến và tập hợp giá thành).',
+    related:['621','622','627','155','632'],
+    flowLane:3, badge:'b-asset', badgeText:'Trọng Tâm', isCenter:true
+  },
+  { code:'155', name:'Sản phẩm', cat:'1', catName:'Loại 1 – Tài Sản Ngắn Hạn',
+    nature:'Hàng tồn kho', dur:'Bên Nợ', isNew:true,
+    brief:'TT99 đổi tên từ Thành phẩm, loại bỏ tài khoản con 1551/1557. Nợ tăng nhập kho từ 154 / Có giảm xuất bán sang 632.',
+    dr:'Trị giá sản phẩm sản xuất hoàn thành kiểm nghiệm nhập kho từ phân xưởng.',
+    cr:'Xuất kho sản phẩm giao bán cho khách (Nợ 632 / Có 155); gửi bán đại lý (Nợ 157 / Có 155).',
+    vas:'TT99 chuẩn hóa tên gọi Sản phẩm thay Thành phẩm, tiệm cận IFRS thuật ngữ.',
+    related:['154','632','157'],
+    flowLane:4, badge:'b-asset', badgeText:'Kho SP'
+  },
+  { code:'157', name:'Hàng gửi đi bán', cat:'1', catName:'Loại 1 – Tài Sản Ngắn Hạn',
+    nature:'Hàng tồn kho', dur:'Bên Nợ', isNew:false,
+    brief:'Hàng đã rời kho gửi đại lý nhưng chưa bán được. Rủi ro vẫn thuộc DN — tuyệt đối cấm ghi doanh thu.',
+    dr:'Trị giá sản phẩm xuất gửi cho đại lý hoặc giao trên đường chưa bàn giao nghiệm thu.',
+    cr:'Đại lý thông báo đã bán được hàng (chuyển sang Nợ 632 / Có 157 và ghi nhận DT 511).',
+    vas:'VAS 14 – Điều kiện ghi nhận doanh thu (Chưa chuyển giao rủi ro sở hữu).',
+    related:['155','632','511'],
+    flowLane:4, badge:'b-asset', badgeText:'Gửi Bán'
+  },
+  { code:'158', name:'NVL tại kho bảo thuế', cat:'1', catName:'Loại 1 – Tài Sản Ngắn Hạn',
+    nature:'Hàng tồn kho', dur:'Bên Nợ', isNew:true,
+    brief:'TT99 đổi tên từ Hàng hóa kho bảo thuế. Phục vụ DN chế xuất, sản xuất xuất khẩu.',
+    dr:'Nhập khẩu NVL đưa thẳng vào kho bảo thuế để sản xuất hàng xuất khẩu.',
+    cr:'Xuất NVL từ kho bảo thuế đưa vào sản xuất (chuyển sang 621 hoặc 152).',
+    vas:'Quy định quản trị hải quan và sản xuất hàng xuất khẩu.',
+    related:['621','152'],
+    flowLane:2, badge:'b-asset', badgeText:'Kho'
+  },
+  // LOẠI 2
+  { code:'211', name:'Tài sản cố định hữu hình', cat:'2', catName:'Loại 2 – Tài Sản Dài Hạn',
+    nature:'Tài sản dài hạn', dur:'Bên Nợ', isNew:false,
+    brief:'Nguyên giá máy móc thiết bị, nhà xưởng thuộc sở hữu DN. Nợ tăng mua mới/vốn hóa / Có giảm thanh lý. Dư Nợ.',
+    dr:'Nguyên giá TSCĐ mua mới, tự xây lắp bàn giao (từ 2412); nâng cấp cải tạo hoàn thành (từ 2414).',
+    cr:'Giảm nguyên giá do nhượng bán, thanh lý, phát hiện mất mát.',
+    vas:'VAS 03 – Tài sản cố định hữu hình (Nguyên giá & Vốn hóa).',
+    related:['214','2414','627'],
+    flowLane:2, badge:'b-asset', badgeText:'TSCĐ'
+  },
+  { code:'214', name:'Hao mòn tài sản cố định', cat:'2', catName:'Loại 2 – Tài Sản Dài Hạn',
+    nature:'Điều chỉnh giảm Tài sản (Contra Asset)', dur:'Bên Có', isNew:false,
+    brief:'Tài khoản ngược chiều: Có tăng (trích KH hàng tháng) / Nợ giảm (khi thanh lý máy). Dư Có lũy kế.',
+    dr:'Giảm giá trị hao mòn lũy kế khi nhượng bán, thanh lý TSCĐ (Nợ 214 / Có 211).',
+    cr:'Trích khấu hao TSCĐ định kỳ hàng tháng vào CP sản xuất (6274), quản lý (6424).',
+    vas:'VAS 03 & Nguyên tắc Phù hợp (Phân bổ hao mòn tương ứng doanh thu).',
+    related:['211','627','642'],
+    flowLane:2, badge:'b-asset', badgeText:'KH'
+  },
+  { code:'215', name:'Tài sản sinh học', cat:'2', catName:'Loại 2 – Tài Sản Dài Hạn',
+    nature:'Tài sản dài/ngắn hạn', dur:'Bên Nợ', isNew:true,
+    brief:'HOÀN TOÀN MỚI TT99 theo IAS 41: 2151 Súc vật làm việc (bò sữa), 2152 Súc vật nuôi lấy sản phẩm (heo), 2153 Cây trồng mùa vụ.',
+    dr:'Mua con giống, cây giống; chi phí nuôi trồng chăm sóc đến khi trưởng thành sinh sản.',
+    cr:'Bán sản phẩm sinh học; giết thịt lấy thịt đưa vào nhà máy chế biến (sang 154).',
+    vas:'TT99/2025 bổ sung mới tiệm cận IAS 41 (Nông nghiệp).',
+    related:['627','154','511'],
+    flowLane:2, badge:'b-asset', badgeText:'Mới TT99'
+  },
+  { code:'229', name:'Dự phòng tổn thất tài sản', cat:'2', catName:'Loại 2 – Tài Sản Dài Hạn',
+    nature:'Điều chỉnh giảm Tài sản', dur:'Bên Có', isNew:true,
+    brief:'Tài khoản ngược chiều: 2293 khó đòi, 2294 giảm giá HTK, 2295 tổn thất tài sản sinh học (MỚI TT99).',
+    dr:'Hoàn nhập số dự phòng đã trích kỳ trước khi giá trị tài sản hồi phục.',
+    cr:'Trích lập bổ sung dự phòng tổn thất cuối năm (Nợ 632/Có 2294; Nợ 642/Có 2293; 2295 mới).',
+    vas:'VAS 18 & Nguyên tắc Thận trọng.',
+    related:['632','642','215'],
+    flowLane:4, badge:'b-liab', badgeText:'Dự Phòng'
+  },
+  { code:'2414', name:'Nâng cấp, cải tạo TSCĐ', cat:'2', catName:'Loại 2 – Tài Sản Dài Hạn',
+    nature:'Tài sản dở dang', dur:'Bên Nợ', isNew:true,
+    brief:'MỚI TT99: Tách riêng CP nâng cấp làm tăng công suất/kéo dài tuổi thọ để vốn hóa tăng nguyên giá (211).',
+    dr:'Tập hợp các khoản chi phí cải tạo, nâng cấp dây chuyền sản xuất lớn.',
+    cr:'Nghiệm thu bàn giao hoàn tất, kết chuyển vốn hóa tăng nguyên giá (Nợ 211 / Có 2414).',
+    vas:'VAS 03 (Đoạn 23 – Vốn hóa chi phí sau ghi nhận ban đầu).',
+    related:['211','112','331'],
+    flowLane:2, badge:'b-asset', badgeText:'Mới TT99'
+  },
+  { code:'242', name:'Chi phí chờ phân bổ', cat:'2', catName:'Loại 2 – Tài Sản Dài Hạn',
+    nature:'Tài sản ngắn/dài hạn', dur:'Bên Nợ', isNew:true,
+    brief:'TT99 đổi tên từ Chi phí trả trước. Treo tiền thuê đất/xưởng/bảo hiểm nhiều năm, phân bổ đều vào 627/642 từng tháng.',
+    dr:'Chi phí trả trước tiền thuê nhà xưởng, bảo hiểm, CCDC xuất dùng nhiều kỳ.',
+    cr:'Phân bổ dần từng tháng vào CP sản xuất chung (627) hoặc quản lý (642).',
+    vas:'VAS 01 – Nguyên tắc Phù hợp & Cơ sở dồn tích.',
+    related:['112','627','642','153'],
+    flowLane:1, badge:'b-asset', badgeText:'Chờ PB'
+  },
+  // LOẠI 3
+  { code:'331', name:'Phải trả cho người bán', cat:'3', catName:'Loại 3 – Nợ Phải Trả',
+    nature:'Nợ phải trả (Lưỡng tính)', dur:'Dư Có / Dư Nợ', isNew:false,
+    brief:'Dư Có: Số tiền còn nợ nhà cung cấp. Dư Nợ: Số tiền đã ứng trước cho người bán. Lưỡng tính nguy hiểm.',
+    dr:'Thanh toán tiền hàng cho người bán bằng TGNH; giảm giá, trả lại hàng được trừ nợ.',
+    cr:'Số nợ phải trả phát sinh khi mua NVL, TSCĐ chưa thanh toán.',
+    vas:'Cơ sở dồn tích (Ghi nhận nợ ngay khi nhận bàn giao quyền sở hữu).',
+    related:['152','133','112','211'],
+    flowLane:1, badge:'b-liab', badgeText:'Nợ PT'
+  },
+  { code:'332', name:'Phải trả cổ tức, lợi nhuận', cat:'3', catName:'Loại 3 – Nợ Phải Trả',
+    nature:'Nợ phải trả', dur:'Bên Có', isNew:true,
+    brief:'HOÀN TOÀN MỚI TT99: Tách riêng nghĩa vụ chia cổ tức từ 3388. Có tăng khi ĐHĐCĐ duyệt chia / Nợ giảm khi trả tiền.',
+    dr:'Chuyển khoản chi trả cổ tức cho cổ đông (Nợ 332 / Có 112).',
+    cr:'Nghị quyết ĐHĐCĐ công bố trích lợi nhuận chia cổ tức (Nợ 421 / Có 332).',
+    vas:'Minh bạch nghĩa vụ tài chính đối với nhà đầu tư theo Luật Doanh nghiệp.',
+    related:['421','112'],
+    flowLane:5, badge:'b-liab', badgeText:'Mới TT99'
+  },
+  { code:'333', name:'Thuế và các khoản phải nộp NN', cat:'3', catName:'Loại 3 – Nợ Phải Trả',
+    nature:'Nợ phải trả (Lưỡng tính)', dur:'Dư Có / Dư Nợ', isNew:false,
+    brief:'3331 VAT đầu ra, 3334 thuế TNDN, 3335 thuế TNCN. Có tăng nghĩa vụ nộp / Nợ giảm khi nộp tiền.',
+    dr:'Số tiền thuế thực tế đã nộp vào Kho bạc Nhà nước qua chuyển khoản.',
+    cr:'Số thuế phát sinh phải nộp (VAT đầu ra khi bán hàng 33311; thuế TNDN tạm tính 3334).',
+    vas:'Luật Quản lý Thuế & Cơ sở dồn tích.',
+    related:['133','511','821'],
+    flowLane:5, badge:'b-liab', badgeText:'Thuế'
+  },
+  { code:'334', name:'Phải trả người lao động', cat:'3', catName:'Loại 3 – Nợ Phải Trả',
+    nature:'Nợ phải trả', dur:'Bên Có', isNew:false,
+    brief:'Có tăng tiền lương tính cho công nhân/nhân viên / Nợ giảm khi trừ bảo hiểm 10.5% & chuyển trả lương.',
+    dr:'Thanh toán lương qua ngân hàng; trừ BHXH 10.5% NLĐ chịu; trừ thuế TNCN, tạm ứng.',
+    cr:'Tính lương, thưởng phải trả cho công nhân TT (622), quản xưởng (627), QLDN (642).',
+    vas:'Luật Lao động & VAS 02 (Chi phí nhân công cấu thành sản phẩm).',
+    related:['622','627','642','338'],
+    flowLane:3, badge:'b-liab', badgeText:'Lương'
+  },
+  { code:'338', name:'Phải trả, phải nộp khác', cat:'3', catName:'Loại 3 – Nợ Phải Trả',
+    nature:'Nợ phải trả', dur:'Bên Có', isNew:true,
+    brief:'3382 KPCĐ, 3383 BHXH, 3384 BHYT, 3386 BHTN. 3387 đổi tên thành Doanh thu chờ phân bổ (MỚI TT99).',
+    dr:'Nộp tiền BHXH 34% cho cơ quan BHXH; phân bổ dần 3387 sang 511.',
+    cr:'Trích nộp bảo hiểm theo lương (DN 23.5%, NLĐ 10.5%); nhận trước tiền thuê xưởng.',
+    vas:'Luật BHXH & Nguyên tắc Dồn tích.',
+    related:['622','334','112'],
+    flowLane:3, badge:'b-liab', badgeText:'Bảo Hiểm'
+  },
+  // LOẠI 4
+  { code:'411', name:'Vốn đầu tư của chủ sở hữu', cat:'4', catName:'Loại 4 – Vốn Chủ Sở Hữu',
+    nature:'Vốn chủ sở hữu', dur:'Bên Có', isNew:false,
+    brief:'Vốn góp thực tế của cổ đông theo giấy phép ĐKKD. Có tăng nhận vốn / Nợ giảm trả bớt vốn hoặc hủy cổ phiếu (419).',
+    dr:'Giảm vốn điều lệ theo thủ tục pháp lý; hủy cổ phiếu mua lại (419).',
+    cr:'Nhận vốn góp bằng tiền mặt, chuyển khoản (112), hoặc tài sản máy móc (211).',
+    vas:'Luật Doanh nghiệp & VAS 01.',
+    related:['112','211','419'],
+    flowLane:1, badge:'b-eq', badgeText:'Vốn CSH'
+  },
+  { code:'419', name:'Cổ phiếu mua lại của chính mình', cat:'4', catName:'Loại 4 – Vốn Chủ Sở Hữu',
+    nature:'Điều chỉnh giảm VCSH (Contra Equity)', dur:'Bên Nợ', isNew:true,
+    brief:'TT99 đổi tên từ Cổ phiếu quỹ cho đồng bộ Luật Doanh nghiệp. Nợ giá mua lại / Có hủy cổ phiếu giảm vốn.',
+    dr:'Số tiền thực tế bỏ ra mua lại cổ phiếu của chính mình đang lưu hành trên sàn.',
+    cr:'Hủy bỏ cổ phiếu mua lại để làm thủ tục giảm vốn điều lệ (Nợ 4111 / Có 419).',
+    vas:'Luật Doanh nghiệp 2020 & Chuẩn mực trình bày vốn CSH.',
+    related:['411','112'],
+    flowLane:1, badge:'b-eq', badgeText:'Mới TT99'
+  },
+  { code:'421', name:'Lợi nhuận sau thuế chưa phân phối', cat:'4', catName:'Loại 4 – Vốn Chủ Sở Hữu',
+    nature:'Vốn chủ sở hữu (Lưỡng tính)', dur:'Dư Có (Lãi) / Dư Nợ (Lỗ)', isNew:false,
+    brief:'Dư Có: Lãi lũy kế chưa chia. Dư Nợ: Lỗ kinh doanh. Có nhận lãi từ 911 / Nợ chia cổ tức sang 332.',
+    dr:'Kết chuyển số lỗ trong kỳ từ 911; trích chia cổ tức sang 332; trích lập quỹ ĐTPT 414.',
+    cr:'Kết chuyển số lãi thuần kinh doanh trong kỳ từ TK 911 (Nợ 911 / Có 4212).',
+    vas:'VAS 01 – Đoạn kết quả kinh doanh và phân phối thặng dư.',
+    related:['911','332','414'],
+    flowLane:5, badge:'b-eq', badgeText:'Lợi Nhuận'
+  },
+  // LOẠI 5/6
+  { code:'511', name:'Doanh thu bán hàng và CCDV', cat:'5', catName:'Loại 5 – Doanh Thu',
+    nature:'Doanh thu cốt lõi', dur:'Không có số dư (kết chuyển cuối kỳ)', isNew:false,
+    brief:'Có phát sinh khi bàn giao SP đủ 5 điều kiện VAS 14. Nợ kết chuyển cuối kỳ sang 911. Tuyệt đối không có số dư.',
+    dr:'Kết chuyển các khoản giảm trừ DT (521); cuối kỳ kết chuyển DT thuần sang 911.',
+    cr:'DT bán sản phẩm hoàn thành bàn giao khách hàng (không bao gồm thuế GTGT đầu ra).',
+    vas:'VAS 14 – Doanh thu và thu nhập khác (5 điều kiện ghi nhận).',
+    related:['131','333','911','632'],
+    flowLane:5, badge:'b-rev', badgeText:'Doanh Thu'
+  },
+  { code:'621', name:'CP nguyên liệu, vật liệu trực tiếp', cat:'6', catName:'Loại 6 – Chi Phí SX & KD',
+    nature:'Chi phí sản xuất trực tiếp', dur:'Không có số dư', isNew:false,
+    brief:'Nợ xuất kho NVL trực tiếp chế tạo SP / Có kết chuyển cuối kỳ sang 154 tính giá thành. Không số dư.',
+    dr:'Trị giá thực tế của NVL xuất kho đưa thẳng vào chuyền sản xuất trực tiếp chế tạo SP.',
+    cr:'NVL dùng không hết nhập lại kho; cuối kỳ kết chuyển toàn bộ vào Nợ 154.',
+    vas:'VAS 02 – Hàng tồn kho (Chi phí nguyên liệu trực tiếp).',
+    related:['152','154'],
+    flowLane:3, badge:'b-cost', badgeText:'CP NVL TT'
+  },
+  { code:'622', name:'Chi phí nhân công trực tiếp', cat:'6', catName:'Loại 6 – Chi Phí SX & KD',
+    nature:'Chi phí sản xuất trực tiếp', dur:'Không có số dư', isNew:false,
+    brief:'Nợ lương công nhân đứng máy + 23.5% bảo hiểm DN chịu / Có kết chuyển cuối kỳ sang 154. Không số dư.',
+    dr:'Tiền lương công nhân sản xuất trực tiếp và 23.5% BHXH, BHYT, BHTN, KPCĐ doanh nghiệp chịu.',
+    cr:'Cuối kỳ kết chuyển toàn bộ vào Nợ 154 để tính giá thành sản phẩm.',
+    vas:'VAS 02 – Hàng tồn kho (Chi phí nhân công trực tiếp chế biến).',
+    related:['334','338','154'],
+    flowLane:3, badge:'b-cost', badgeText:'CP NC TT'
+  },
+  { code:'627', name:'Chi phí sản xuất chung', cat:'6', catName:'Loại 6 – Chi Phí SX & KD',
+    nature:'Chi phí phân xưởng', dur:'Không có số dư', isNew:false,
+    brief:'Khấu hao máy 214, điện nước xưởng, lương quản đốc, CCDC xưởng. Nợ phát sinh / Có kết chuyển sang 154. Không số dư.',
+    dr:'CP quản lý PX (6271), vật liệu phụ xưởng (6272), khấu hao máy xưởng (6274), điện nước (6277).',
+    cr:'Cuối kỳ phân bổ CP cố định bình thường và CP biến đổi sang Nợ 154.',
+    vas:'VAS 02 (Đoạn 11: Phân bổ CP SXC theo công suất bình thường).',
+    related:['214','334','242','154'],
+    flowLane:3, badge:'b-cost', badgeText:'CP SXC'
+  },
+  { code:'632', name:'Giá vốn hàng bán', cat:'6', catName:'Loại 6 – Chi Phí SX & KD',
+    nature:'Chi phí cốt lõi', dur:'Không có số dư', isNew:false,
+    brief:'Nợ giá xuất kho SP giao bán matching với 511 + CP hao hụt vượt định mức / Có kết chuyển sang 911. Không số dư.',
+    dr:'Giá thành SX thực tế của số SP đã xuất bán trong kỳ; CP NVL vượt định mức.',
+    cr:'Hàng bán bị khách trả lại nhập kho (giảm giá vốn); cuối kỳ kết chuyển toàn bộ sang Nợ 911.',
+    vas:'VAS 01 (Nguyên tắc Phù hợp matching) & VAS 02 (Đoạn 14).',
+    related:['155','511','154','911'],
+    flowLane:5, badge:'b-cost', badgeText:'Giá Vốn'
+  },
+  { code:'641', name:'Chi phí bán hàng', cat:'6', catName:'Loại 6 – Chi Phí SX & KD',
+    nature:'Chi phí thời kỳ', dur:'Không có số dư', isNew:false,
+    brief:'Vận chuyển giao hàng, bao bì đóng gói, lương nhân viên sale. Nợ phát sinh / Có kết chuyển 911. Không số dư.',
+    dr:'Lương NV bán hàng (6411); khấu hao xe giao hàng (6414); quảng cáo, hội chợ (6417).',
+    cr:'Các khoản giảm trừ; cuối kỳ kết chuyển toàn bộ sang Nợ 911.',
+    vas:'VAS 01 – Nguyên tắc Phù hợp trong kỳ.',
+    related:['334','214','911'],
+    flowLane:5, badge:'b-cost', badgeText:'Bán Hàng'
+  },
+  { code:'642', name:'Chi phí quản lý doanh nghiệp', cat:'6', catName:'Loại 6 – Chi Phí SX & KD',
+    nature:'Chi phí quản lý', dur:'Không có số dư', isNew:false,
+    brief:'Lương ban giám đốc, kế toán, khấu hao văn phòng, dự phòng khó đòi 2293. Nợ phát sinh / Có kết chuyển 911.',
+    dr:'Lương khối văn phòng (6421), văn phòng phẩm (6423), trích lập DP phải thu khó đòi (6426).',
+    cr:'Hoàn nhập dự phòng nợ khó đòi; cuối kỳ kết chuyển toàn bộ sang Nợ 911.',
+    vas:'VAS 01 – Chi phí quản lý chung thời kỳ.',
+    related:['334','214','229','911'],
+    flowLane:5, badge:'b-cost', badgeText:'QLDN'
+  },
+  { code:'821', name:'Chi phí thuế thu nhập doanh nghiệp', cat:'8', catName:'Loại 8 – Chi Phí Thuế TNDN',
+    nature:'Chi phí thuế', dur:'Không có số dư', isNew:true,
+    brief:'82111 thuế TNDN hiện hành; 82112 thuế tối thiểu toàn cầu Pillar 2 (MỚI TT99). Nợ tính thuế / Có kết chuyển 911.',
+    dr:'Thuế TNDN hiện hành phải nộp (82111); thuế TNDN bổ sung Pillar 2 (82112 mới TT99).',
+    cr:'Kết chuyển toàn bộ CP thuế TNDN sang Nợ 911 cuối kỳ.',
+    vas:'VAS 17 – Thuế thu nhập doanh nghiệp & Nghị quyết thuế tối thiểu toàn cầu.',
+    related:['333','911'],
+    flowLane:5, badge:'b-cost', badgeText:'Mới TT99'
+  },
+  { code:'911', name:'Xác định kết quả kinh doanh', cat:'9', catName:'Loại 9 – Xác Định Kết Quả',
+    nature:'Tài khoản trung gian (không bao giờ có số dư)', dur:'Tuyệt đối không số dư', isNew:false,
+    brief:'Gom Có DT 511/515/711 đối chiếu với Nợ CP 632/641/642/635/821. Chênh lệch kết chuyển Lãi sang 4212 hoặc ghi nhận Lỗ.',
+    dr:'Giá vốn (632), CP bán hàng (641), CP QLDN (642), Thuế (821). Kết chuyển LÃI sang Có 4212.',
+    cr:'DT thuần (511), DT tài chính (515), Thu nhập khác (711). Kết chuyển LỖ sang Nợ 4212.',
+    vas:'Khóa sổ kế toán chu kỳ & Đo lường hiệu quả kinh tế.',
+    related:['511','632','641','642','821','421'],
+    flowLane:5, badge:'b-rev', badgeText:'Kết Quả', isCenter:true
+  }
+];
+
+// FLOWCHART STRUCTURE
+const FLOWCHART = [
+  { id: 1, title: 'Đầu Vào & Tài Trợ', nodes: [
+    { code:'411', name:'Vốn đầu tư CSH', desc:'Vốn góp cổ đông, Có tăng vốn', badge:'b-eq', badgeText:'Vốn CSH' },
+    { code:'331', name:'Phải trả người bán', desc:'Nợ tiền mua NVL/máy móc', badge:'b-liab', badgeText:'Nợ PT', },
+    { code:'112', name:'TG không kỳ hạn', desc:'Thanh toán qua ngân hàng', badge:'b-asset', badgeText:'Tiền Gửi' },
+    { code:'133', name:'Thuế GTGT khấu trừ', desc:'Quyền tài sản thuế đầu vào', badge:'b-asset', badgeText:'Thuế' },
+    { code:'242', name:'CP chờ phân bổ', desc:'Thuê xưởng phân bổ dần 627', badge:'b-asset', badgeText:'Chờ PB' },
+  ]},
+  { id: 2, title: 'Kho Vật Tư & TSCĐ', nodes: [
+    { code:'152', name:'Nguyên liệu, vật liệu', desc:'NVL nhập kho, xuất vào 621', badge:'b-asset', badgeText:'Kho NVL' },
+    { code:'153', name:'Công cụ, dụng cụ', desc:'CCDC xưởng, xuất qua 242', badge:'b-asset', badgeText:'CCDC' },
+    { code:'211', name:'TSCĐ hữu hình', desc:'Nguyên giá máy móc xưởng', badge:'b-asset', badgeText:'TSCĐ' },
+    { code:'215', name:'Tài sản sinh học', desc:'Mới TT99: bò sữa, heo, cây', badge:'b-asset', badgeText:'Mới TT99' },
+    { code:'2414', name:'Nâng cấp TSCĐ', desc:'Vốn hóa tăng nguyên giá 211', badge:'b-asset', badgeText:'Mới TT99' },
+  ]},
+  { id: 3, title: 'Phân Xưởng & Giá Thành', nodes: [
+    { code:'621', name:'CP NVL trực tiếp', desc:'Vải, sắt thép chế tạo SP', badge:'b-cost', badgeText:'CP NVL TT' },
+    { code:'622', name:'CP nhân công TT', desc:'Lương + 23.5% bảo hiểm DN', badge:'b-cost', badgeText:'CP NC TT' },
+    { code:'627', name:'CP sản xuất chung', desc:'Khấu hao, điện nước xưởng', badge:'b-cost', badgeText:'CP SXC' },
+    { code:'154', name:'CP SXKD dở dang', desc:'Trọng tâm: gom 621+622+627', badge:'b-asset', badgeText:'Trọng Tâm', isCenter:true },
+  ]},
+  { id: 4, title: 'Kho Thành Phẩm', nodes: [
+    { code:'155', name:'Sản phẩm', desc:'TT99 đổi tên từ Thành phẩm', badge:'b-asset', badgeText:'Kho SP' },
+    { code:'157', name:'Hàng gửi đi bán', desc:'Gửi đại lý, chưa ghi DT', badge:'b-asset', badgeText:'Gửi Bán' },
+    { code:'229', name:'DP giảm giá HTK', desc:'NRV < Giá gốc, trích Nợ 632', badge:'b-liab', badgeText:'Dự Phòng' },
+  ]},
+  { id: 5, title: 'Tiêu Thụ & Kết Quả', nodes: [
+    { code:'511', name:'Doanh thu bán hàng', desc:'5 điều kiện VAS 14', badge:'b-rev', badgeText:'Doanh Thu' },
+    { code:'632', name:'Giá vốn hàng bán', desc:'Matching với 511, kết chuyển 911', badge:'b-cost', badgeText:'Giá Vốn' },
+    { code:'641', name:'CP bán hàng', desc:'Vận chuyển, lương sale', badge:'b-cost', badgeText:'Bán Hàng' },
+    { code:'642', name:'CP quản lý DN', desc:'Lương VP, khấu hao trụ sở', badge:'b-cost', badgeText:'QLDN' },
+    { code:'911', name:'Xác định KQKD', desc:'DT - CP → Lãi sang 4212', badge:'b-rev', badgeText:'Kết Quả', isCenter:true },
+  ]},
+];
+
+// WORKFLOW ENTRIES
+const WF = [
+  { related:['152','133','331'],
+    title:'Nhập kho NVL chưa thanh toán',
+    vas:'VAS 02 (Đoạn 08) & Luật Thuế GTGT',
+    dr:'Nợ TK 152: Giá mua chưa thuế + CP vận chuyển<br>Nợ TK 1331: Thuế GTGT đầu vào được khấu trừ',
+    cr:'Có TK 331: Tổng nợ phải trả theo hóa đơn',
+    why:'<b>Nguyên tắc Giá gốc:</b> NVL phản ánh toàn bộ CP hợp lý đưa hàng về kho. Thuế GTGT đầu vào là tài sản quyền thu (được khấu trừ), không phải CP cấu thành sản phẩm nên phải hạch toán riêng vào 1331.'
+  },
+  { related:['242','112'],
+    title:'Trả trước tiền thuê xưởng 1 năm bằng chuyển khoản',
+    vas:'VAS 01 (Nguyên tắc Phù hợp & Dồn tích)',
+    dr:'Nợ TK 242: Chi phí chờ phân bổ (TT99 đổi tên)<br>Nợ TK 1331: Thuế GTGT được khấu trừ',
+    cr:'Có TK 112: Tiền gửi không kỳ hạn',
+    why:'Nhà xưởng phục vụ sản xuất trong 12 tháng. Ghi hết tháng đầu → lỗ nặng tháng 1, tháng sau CP = 0đ. Treo 242 để mỗi tháng trích đều 1/12 vào 627, đảm bảo kết quả KD phản ánh đúng thực tế.'
+  },
+  { related:['2414','211'],
+    title:'Nâng cấp cải tạo dây chuyền tự động hóa (MỚI TT99)',
+    vas:'VAS 03 (Đoạn 23 – Vốn hóa CP sau ban đầu)',
+    dr:'Bước 1: Nợ TK 2414 / Có 112, 331 (Tập hợp CP nâng cấp)<br>Bước 2: Nợ TK 211 / Có TK 2414 (Nghiệm thu tăng nguyên giá)',
+    cr:'',
+    why:'TT99 bổ sung TK 2414 tách bạch: Sửa chữa bảo dưỡng định kỳ (2413/627) → tính CP trong kỳ; Nâng cấp kéo dài tuổi thọ hoặc tăng năng suất → bắt buộc vốn hóa tăng nguyên giá TSCĐ (211).'
+  },
+  { related:['621','152'],
+    title:'Xuất kho NVL đưa vào sản xuất trực tiếp',
+    vas:'VAS 02 & Cơ sở dồn tích',
+    dr:'Nợ TK 621: Chi phí NVL trực tiếp phát sinh',
+    cr:'Có TK 152: Giảm trị giá NVL tồn kho',
+    why:'Chuyển hóa hình thái tài sản: NVL từ dạng dự trữ trong kho (152) chuyển thành CP phát sinh trong kỳ (621). Chỉ tính vật tư cấu thành trực tiếp theo định mức kỹ thuật.'
+  },
+  { related:['622','334','338'],
+    title:'Tính lương & trích BHXH công nhân sản xuất trực tiếp',
+    vas:'VAS 02 (Chi phí chế biến) & Luật BHXH',
+    dr:'Nợ TK 622: Lương công nhân + 23.5% BHXH doanh nghiệp chịu',
+    cr:'Có TK 334: Tổng lương phải trả người lao động<br>Có TK 338: 34% BHXH, BHYT, BHTN, KPCĐ phải nộp',
+    why:'Sức lao động đứng máy là CP cấu thành sản phẩm. DN chịu 23.5% bảo hiểm theo luật bắt buộc tính vào 622. NLĐ chịu 10.5% trừ trực tiếp vào lương (334).'
+  },
+  { related:['154','621','622','627'],
+    title:'Cuối kỳ kết chuyển chi phí tính giá thành dở dang',
+    vas:'VAS 02 (Phương pháp Kê khai thường xuyên)',
+    dr:'Nợ TK 154: Chi phí sản xuất kinh doanh dở dang',
+    cr:'Có TK 621: Kết chuyển CP NVL trực tiếp<br>Có TK 622: Kết chuyển CP nhân công TT<br>Có TK 627: Kết chuyển CP sản xuất chung',
+    why:'TK Loại 6 chỉ là TK tập hợp CP thời kỳ, không có số dư. Toàn bộ CP sản xuất trong tháng kết tinh vào khối lượng SP dở dang trên chuyền (154). Dư Nợ 154 = giá trị dở dang cuối kỳ.'
+  },
+  { related:['155','154','632'],
+    title:'Nghiệm thu nhập kho sản phẩm & Xử lý vượt định mức',
+    vas:'VAS 02 (Đoạn 11 & Đoạn 14)',
+    dr:'SP đạt chuẩn: Nợ TK 155 / Có TK 154 (Giá thành thực tế)<br>CP vượt định mức: Nợ TK 632 / Có TK 154',
+    cr:'',
+    why:'<b>Nguyên tắc Thận trọng:</b> Tiêu hao NVL vượt định mức (lãng phí sản xuất) bị cấm cộng vào giá trị SP 155 (thổi phồng tài sản ảo). Toàn bộ CP lãng phí tống thẳng vào Giá vốn 632.'
+  },
+  { related:['215','627'],
+    title:'Khấu hao đàn bò sữa định kỳ (MỚI TT99)',
+    vas:'TT99 tiệm cận IAS 41 (Nông nghiệp)',
+    dr:'Nợ TK 627: CP sản xuất chung (khấu hao sinh học)',
+    cr:'Có TK 215122: Hao mòn lũy kế súc vật nuôi định kỳ',
+    why:'Đàn bò sữa sau khi trưởng thành (chuyển sang 215121) được trích khấu hao tương tự TSCĐ máy móc vì mang lại dòng sản phẩm sữa tươi liên tục trong nhiều chu kỳ khai thác.'
+  },
+  { related:['511','632','155','131'],
+    title:'Xuất bán sản phẩm & Ghi nhận doanh thu song hành',
+    vas:'VAS 14 (5 điều kiện ghi DT) & VAS 01 (Phù hợp)',
+    dr:'Giá vốn: Nợ TK 632 / Có TK 155 (Giảm kho SP giá thành)<br>Doanh thu: Nợ TK 131 / Có TK 511; Có TK 33311 (VAT)',
+    cr:'',
+    why:'<b>Nguyên tắc Phù hợp sống còn:</b> Ghi nhận DT (511) → bắt buộc ghi nhận CP tương ứng tạo ra nó (632) cùng kỳ. Hiệu số DT – Giá vốn = Lợi nhuận gộp chính xác.'
+  },
+  { related:['131','112'],
+    title:'Khách hàng đặt cọc tiền trước khi nhận hàng',
+    vas:'VAS 14 & Nguyên tắc Thận trọng',
+    dr:'Nợ TK 112: Tiền gửi ngân hàng tăng',
+    cr:'Có TK 131: Dư Có phải thu KH (không phải nợ KH!)',
+    why:'Đã nhận tiền nhưng chưa chuyển giao rủi ro và quyền sở hữu hàng cho khách. DN đang mang nghĩa vụ nợ phải giao hàng → bắt buộc treo Dư Có 131, tuyệt đối không ghi nhận DT 511.'
+  },
+  { related:['821','333'],
+    title:'CP thuế TNDN bổ sung Pillar 2 (MỚI TT99)',
+    vas:'VAS 17 & Nghị quyết Thuế Tối thiểu Toàn cầu',
+    dr:'Nợ TK 82112: CP thuế TNDN bổ sung theo Pillar 2',
+    cr:'Có TK 3334: Thuế TNDN phải nộp NSNN',
+    why:'Áp dụng cho tập đoàn đa quốc gia có DT hợp nhất ≥750 triệu EUR theo cơ chế Pillar 2 của OECD. TT99 tạo riêng TK 82112 phân biệt với thuế TNDN hiện hành (82111).'
+  },
+  { related:['421','332'],
+    title:'Công bố quyết định chia cổ tức (MỚI TT99)',
+    vas:'Cơ sở dồn tích & Luật Doanh nghiệp',
+    dr:'Nợ TK 421: Lợi nhuận chưa phân phối giảm',
+    cr:'Có TK 332: Phải trả cổ tức, lợi nhuận (Tách riêng khỏi 3388)',
+    why:'Khi ĐHĐCĐ ra Nghị quyết chia cổ tức, lợi nhuận giữ lại chuyển hóa thành nghĩa vụ nợ pháp lý. TT99 tách riêng TK 332 giúp nhà đầu tư và kiểm toán giám sát minh bạch dòng tiền cổ tức.'
+  },
+  { related:['911','511','632','641','642','421'],
+    title:'Khóa sổ cuối kỳ xác định kết quả & Kết chuyển lãi',
+    vas:'VAS 01 – Đoạn kết quả kinh doanh',
+    dr:'Kết chuyển DT: Nợ TK 511 / Có TK 911<br>Kết chuyển CP: Nợ TK 911 / Có TK 632, 641, 642, 821<br>Kết chuyển LÃI: Nợ TK 911 / Có TK 4212',
+    cr:'',
+    why:'TK 911 là TK trung gian. Toàn bộ DT gom bên Có, CP gom bên Nợ. Chênh lệch DT > CP = lãi thuần, kết chuyển sang Có 4212. TK 911 tuyệt đối không có số dư sau khi khóa sổ.'
+  }
+];
+
+// ── STATE ────────────────────────────────────────────────────────
+let currentCode = null;
+let sidebarMini = false;
+
+// ── RENDER SIDEBAR ───────────────────────────────────────────────
+function renderSidebar(list) {
+  const container = document.getElementById('sidebar-list');
+  container.innerHTML = '';
+  const catMap = {};
+  list.forEach(acc => {
+    if (!catMap[acc.catName]) catMap[acc.catName] = [];
+    catMap[acc.catName].push(acc);
+  });
+  Object.entries(catMap).forEach(([catName, accs]) => {
+    const lbl = document.createElement('div');
+    lbl.className = 'cat-label';
+    lbl.textContent = catName;
+    container.appendChild(lbl);
+    accs.forEach(acc => {
+      const item = document.createElement('div');
+      item.className = 'acc-item' + (acc.code === currentCode ? ' active' : '');
+      item.id = 'si-' + acc.code;
+      item.onclick = () => inspectAccount(acc.code);
+      item.innerHTML = `
+        <span class="acc-chip">${acc.code}</span>
+        <span class="acc-label">${acc.name}</span>
+        ${acc.isNew ? '<span class="new-dot" title="Mới TT99"></span>' : ''}
+      `;
+      container.appendChild(item);
+    });
+  });
+}
+
+function searchAccounts() {
+  const kw = document.getElementById('search-input').value.toLowerCase().trim();
+  const filtered = kw ? DB.filter(a =>
+    a.code.toLowerCase().includes(kw) ||
+    a.name.toLowerCase().includes(kw) ||
+    a.brief.toLowerCase().includes(kw)
+  ) : DB;
+  renderSidebar(filtered);
+}
+
+// ── TOGGLE SIDEBAR ───────────────────────────────────────────────
+function toggleSidebar() {
+  sidebarMini = !sidebarMini;
+  document.getElementById('sidebar').classList.toggle('mini', sidebarMini);
+}
+
+// ── RENDER FLOWCHART ─────────────────────────────────────────────
+function renderFlowchart() {
+  const container = document.getElementById('flowchart-lanes');
+  container.innerHTML = '';
+  FLOWCHART.forEach(lane => {
+    const laneEl = document.createElement('div');
+    laneEl.className = 'lane';
+    laneEl.innerHTML = `<div class="lane-hd">${lane.id}. ${lane.title}</div>`;
+    lane.nodes.forEach(node => {
+      const el = document.createElement('div');
+      el.className = 'f-node' + (node.isCenter ? ' center-node' : '');
+      el.onclick = () => inspectAccount(node.code);
+      el.innerHTML = `
+        <div class="fn-top">
+          <span class="fn-code">${node.code}</span>
+          <span class="fn-badge ${node.badge}">${node.badgeText}</span>
+        </div>
+        <div class="fn-name">${node.name}</div>
+        <div class="fn-desc">${node.desc}</div>
+      `;
+      laneEl.appendChild(el);
+    });
+    container.appendChild(laneEl);
+  });
+}
+
+// ── RENDER ALL WORKFLOW ──────────────────────────────────────────
+function renderAllWF() {
+  const container = document.getElementById('all-wf-list');
+  document.getElementById('wf-count').textContent = WF.length;
+  container.innerHTML = '';
+  WF.forEach(wf => container.appendChild(buildWFItem(wf)));
+}
+
+function buildWFItem(wf) {
+  const item = document.createElement('div');
+  item.className = 'wf-item';
+  item.innerHTML = `
+    <div class="wf-head">
+      <div class="wf-name">📌 ${wf.title}</div>
+      <span class="wf-vas-tag">${wf.vas}</span>
+    </div>
+    <div class="entry-box">
+      <div class="e-dr">${wf.dr}</div>
+      ${wf.cr ? `<div class="e-cr">${wf.cr}</div>` : ''}
+    </div>
+    <div class="wf-why">💡 <b>Tại sao ghi như vậy:</b> ${wf.why}</div>
+  `;
+  return item;
+}
+
+// ── INSPECT ACCOUNT ──────────────────────────────────────────────
+function inspectAccount(code) {
+  const acc = DB.find(a => a.code === code);
+  if (!acc) return;
+  currentCode = code;
+
+  // Update sidebar highlight
+  document.querySelectorAll('.acc-item').forEach(el => el.classList.remove('active'));
+  const si = document.getElementById('si-' + code);
+  if (si) {
+    si.classList.add('active');
+    si.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // Collapse sidebar to mini when selecting account
+  if (!sidebarMini) {
+    sidebarMini = true;
+    document.getElementById('sidebar').classList.add('mini');
+  }
+
+  // Fill detail panel
+  document.getElementById('d-code').textContent = acc.code;
+  document.getElementById('d-name').textContent = acc.name;
+  const newBadge = document.getElementById('d-new');
+  if (acc.isNew) { newBadge.style.display = ''; } else { newBadge.style.display = 'none'; }
+  document.getElementById('d-nature').textContent = acc.nature;
+  document.getElementById('d-dur').textContent = acc.dur;
+  document.getElementById('d-brief').innerHTML = `<b>Khái niệm:</b> ${acc.brief}`;
+  document.getElementById('d-dr').innerHTML = acc.dr;
+  document.getElementById('d-cr').innerHTML = acc.cr;
+  document.getElementById('d-vas').innerHTML = acc.vas;
+
+  // Mini flow
+  const mf = document.getElementById('d-mini-flow');
+  mf.innerHTML = '';
+  const related = acc.related || [];
+  const addNode = (c, isActive) => {
+    const n = document.createElement('div');
+    n.className = 'mf-node' + (isActive ? ' mf-active' : '');
+    n.textContent = c;
+    n.title = DB.find(a=>a.code===c)?.name || c;
+    n.onclick = isActive ? null : () => inspectAccount(c);
+    mf.appendChild(n);
+  };
+  // Show: related → arrow → current → arrow → related (connected)
+  const before = related.slice(0, Math.ceil(related.length/2));
+  const after  = related.slice(Math.ceil(related.length/2));
+  before.forEach(c => { addNode(c, false); const a=document.createElement('span'); a.className='mf-arrow'; a.textContent='→'; mf.appendChild(a); });
+  addNode(code, true);
+  after.forEach(c => { const a=document.createElement('span'); a.className='mf-arrow'; a.textContent='→'; mf.appendChild(a); addNode(c, false); });
+
+  // Filter workflow entries
+  const wfContainer = document.getElementById('d-wf-list');
+  wfContainer.innerHTML = '';
+  const matched = WF.filter(w => w.related.includes(code));
+  if (matched.length > 0) {
+    matched.forEach(wf => wfContainer.appendChild(buildWFItem(wf)));
+  } else {
+    wfContainer.innerHTML = `<div class="empty-state">📭 Chưa có bút toán cụ thể cho tài khoản này.<br>Các TK liên quan: <b>${related.join(', ')}</b></div>`;
+  }
+
+  // Show detail panel with animation
+  document.getElementById('panel-overview').classList.add('hidden');
+  document.getElementById('panel-detail').classList.add('visible');
+}
+
+// ── SHOW OVERVIEW ────────────────────────────────────────────────
+function showOverview() {
+  currentCode = null;
+  // Expand sidebar
+  sidebarMini = false;
+  document.getElementById('sidebar').classList.remove('mini');
+  // Clear sidebar highlight
+  document.querySelectorAll('.acc-item').forEach(el => el.classList.remove('active'));
+  // Clear flowchart highlights
+  document.querySelectorAll('.f-node').forEach(el => el.classList.remove('hl'));
+  // Switch panels
+  document.getElementById('panel-overview').classList.remove('hidden');
+  document.getElementById('panel-detail').classList.remove('visible');
+}
+
+// ── INIT ─────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  renderSidebar(DB);
+  renderFlowchart();
+  renderAllWF();
+});
+</script>
+</body>
+</html>
